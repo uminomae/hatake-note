@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>hatake-note ― 巻末付録（再現ガイド）</title>
+<style>
+:root{--bg:#f4f6f9;--panel:#ffffff;--ink:#1b2733;--sub:#5a6b7d;--line:#e2e7ee;
+--accent:#0b5fff;--accent-ink:#ffffff;--navy:#111d33;--navy-ink:#c9d6ea;
+--ok:#0b8a3d;--ok-bg:#e6f6ec;--no:#b3261e;--no-bg:#fbe9e7;--hold:#8a5a00;--hold-bg:#fdf1da;
+--s-plan:#2a78d6;--s-actual:#eb6834;}
+@media (prefers-color-scheme: dark){:root{--bg:#0f1520;--panel:#161d2b;--ink:#e7edf6;--sub:#98a6ba;
+--line:#263041;--navy:#0a0f1a;--navy-ink:#c9d6ea;--ok:#5fd68b;--ok-bg:#123321;--no:#ff8a80;--no-bg:#3a1613;
+--hold:#f0c674;--hold-bg:#3a2c0c;--s-plan:#3987e5;--s-actual:#d95926;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Kaku Gothic ProN",
+"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.7}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex:0 0 220px;background:var(--navy);color:var(--navy-ink);padding:20px 14px;
+position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto}
+.brand{font-weight:700;font-size:17px;color:#fff;margin-bottom:4px}
+.brand-sub{font-size:11px;color:#8fa2c2;margin-bottom:18px}
+.pagetabs{display:flex;flex-direction:column;gap:2px;margin-bottom:18px;padding-bottom:16px;
+border-bottom:1px solid rgba(255,255,255,.12)}
+.pagetabs a{color:var(--navy-ink);text-decoration:none;font-size:13px;font-weight:600;padding:8px 10px;
+border-radius:6px}
+.pagetabs a:hover{background:rgba(255,255,255,.08);color:#fff}
+.pagetabs a.active{background:var(--accent);color:#fff}
+.sidebar .navhead{font-size:10.5px;letter-spacing:.06em;color:#8fa2c2;margin:0 0 4px 10px;text-transform:uppercase}
+.sidebar nav{display:flex;flex-direction:column;gap:2px}
+.sidebar nav.toc a.sub{font-size:12px;padding:5px 10px 5px 22px;color:#a9b8d0}
+.sidebar a{color:var(--navy-ink);text-decoration:none;font-size:13px;padding:8px 10px;border-radius:6px}
+.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar nav.toc a{border-left:3px solid transparent}
+.sidebar nav.toc a.active{background:rgba(11,95,255,.28);color:#fff;font-weight:700;
+border-left-color:var(--accent)}
+.sidebar nav.xlink{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.sidebar nav.xlink a{font-size:12px;color:#8fa2c2}
+.main{flex:1;min-width:0;padding:0 0 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;
+background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+.breadcrumb{font-size:13px;color:var(--sub)}
+.badge{font-size:11px;background:var(--accent);color:var(--accent-ink);padding:4px 10px;border-radius:999px;font-weight:600}
+.wrap{padding:22px 28px}
+.kpirow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:8px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .label{font-size:11px;color:var(--sub);margin-bottom:6px}
+.kpi .value{font-size:26px;font-weight:700;color:var(--accent)}
+.kpi .meta{font-size:11px;color:var(--sub);margin-top:4px}
+section{margin:34px 0}
+h2{font-size:18px;border-left:4px solid var(--accent);padding-left:10px;margin:0 0 6px}
+h3{font-size:14px}
+.lede{color:var(--sub);font-size:13px;margin:0 0 14px}
+.domaincard .general{color:var(--sub);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:0 0 10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.tw{overflow-x:auto}
+table.dtable{width:100%;border-collapse:collapse;font-size:13px}
+table.dtable th{text-align:left;color:var(--sub);font-weight:600;font-size:11px;text-transform:uppercase;
+letter-spacing:.03em;border-bottom:1px solid var(--line);padding:8px 10px;white-space:nowrap}
+table.dtable td{border-bottom:1px solid var(--line);padding:9px 10px;vertical-align:top}
+table.dtable tr:last-child td{border-bottom:none}
+table.dtable.matrix td:first-child{white-space:nowrap;font-weight:600}
+table.dtable.matrix th{white-space:normal}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.no{background:var(--no-bg);color:var(--no)}
+.pill.hold{background:var(--hold-bg);color:var(--hold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* ── モバイル〔#141〕: サイドバーは drawer（off-canvas）へ。トップバーが「ページ名＋メニューボタン」になる。
+   横一列に並べたナビもTOCも置かない（横スクロールするナビを作らない）。 */
+.menu-btn{display:none;appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+font:inherit;font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;min-height:38px;
+flex:0 0 auto}
+.menu-btn[aria-expanded="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.drawer-backdrop{display:none;position:fixed;inset:0;background:#0008;z-index:8}
+.sidebar .drawer-close{display:none}
+.wrap [id]{scroll-margin-top:calc(var(--hdr,64px) + 8px)}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}
+.app{flex-direction:column}
+.menu-btn{display:inline-block}
+/* ★閉じた drawer は Tab 順からも外す〔#141 Codex 再レビュー 要修正2〕＝translateX だけだと画面外の✕・リンクへ
+   初期 Tab が入る。visibility:hidden（CSS だけで効く・transform の遷移が終わってから隠す）＋JS が inert を付ける */
+.sidebar{position:fixed;top:0;left:0;bottom:0;height:100vh;width:min(86vw,320px);flex:none;z-index:9;
+transform:translateX(-102%);visibility:hidden;transition:transform .18s ease-out,visibility 0s linear .18s;box-shadow:2px 0 12px #0006}
+body.menu-open .sidebar{transform:none;visibility:visible;transition:transform .18s ease-out,visibility 0s}
+body.menu-open .drawer-backdrop{display:block}
+body.menu-open{overflow:hidden}
+.sidebar .drawer-close{display:inline-block;appearance:none;border:1px solid rgba(255,255,255,.35);
+background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:12px;font-weight:700;padding:5px 10px;
+border-radius:999px;cursor:pointer;float:right;margin:-2px 0 0}
+.topbar{padding:10px 14px;gap:8px}
+.topbar .breadcrumb{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink)}
+.topbar .badge{display:none}
+.wrap{padding:16px 14px}}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px}
+.tag b{color:var(--accent)}
+.domaincard{margin-bottom:12px;padding:0}
+.domaincard>summary{cursor:pointer;padding:14px 20px}
+.domaincard>summary h3{display:inline;margin:0;font-size:15px}
+.domaincard>.body{padding:0 20px 18px}
+.domaincard h3{margin:0 0 4px;font-size:15px}
+details.flush{border-top:1px solid var(--line)}
+details.flush>summary{cursor:pointer;font-weight:600;padding:9px 4px;font-size:13px}
+details.flush>.body{padding:4px 4px 12px;font-size:13px}
+.months{border-bottom:1px solid var(--line);margin-top:6px}
+p.more{margin:6px 0 18px;font-size:13px}
+.sidebar nav.pagetabs.more a{font-size:12.5px}
+.figure{overflow-x:auto;max-height:520px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;
+background:#fdfdfb}
+.figure svg{display:block;min-width:520px}
+.chartfig{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+padding:14px 16px 6px}
+.chartfig svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto}
+.chart-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:2px}
+.chart-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;
+vertical-align:middle}
+.chart-caption{font-size:11px;color:var(--sub);margin:6px 0 4px}
+.domaincard a{color:var(--accent)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.tile{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+text-decoration:none;color:var(--ink)}
+.tile b{display:block;color:var(--accent);font-size:15px;margin-bottom:6px}
+.tile span{font-size:12px;color:var(--sub)}
+.mcell{text-align:center}
+.mcell-n{font-size:11px;color:var(--sub)}
+.mcell-badges{display:flex;gap:3px;justify-content:center;margin-top:2px;flex-wrap:wrap}
+.mempty{color:var(--sub)}
+.enname{color:var(--sub);font-size:11px;font-style:italic}
+.refnote{color:var(--sub);font-size:10px}
+.itto-grid{grid-template-columns:1fr 1fr}
+@media (max-width:820px){.itto-grid{grid-template-columns:1fr}}
+.itto-card h3{color:var(--accent)}
+.itto-row{display:flex;gap:8px;font-size:13px;padding:4px 0;border-top:1px dashed var(--line)}
+.itto-row:first-of-type{border-top:none}
+.itto-k{flex:0 0 56px;font-size:10px;font-weight:700;color:var(--sub);padding-top:2px}
+.kacard{margin-bottom:20px}
+.kacard summary{cursor:pointer;font-weight:600;padding:10px 4px}
+.appendix-body p{margin:0 0 10px}
+.appendix-body ol,.appendix-body ul{margin:0 0 10px;padding-left:1.4em}
+.appendix-body li{margin:0 0 8px}
+.appendix-body p:last-child{margin-bottom:0}
+.appendix-body .tw{margin:0 0 10px}
+.appendix-body table.dtable{min-width:600px}
+.appendix-body table.dtable td:first-child,.appendix-body table.dtable td:nth-child(2){white-space:nowrap}
+pre{background:var(--navy);color:var(--navy-ink);border-radius:8px;padding:14px 16px;
+overflow-x:auto;font-size:12px;line-height:1.6;margin:0 0 10px}
+pre code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+footer{padding:24px 28px;color:var(--sub);font-size:12px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="drawer-backdrop" data-menu-close="1"></div>
+  <aside class="sidebar" id="site-menu">
+    <button type="button" class="drawer-close" data-menu-close="1" aria-label="メニューを閉じる">✕ 閉じる</button>
+    <div class="brand">🌱 hatake-note</div>
+    <div class="brand-sub">家庭菜園プロジェクト・ダッシュボード</div>
+    <div class="navhead">ページ</div>
+    <nav class="pagetabs" aria-label="ページ"><a href="./index.html">概要ダッシュボード</a><a href="./pmbok7.html">PMBOK 第7版</a><a href="./pmbok6.html">PMBOK 第6版</a><a href="./agile.html">アジャイル生産管理</a><a href="./registers.html">運用記録</a></nav>
+    <div class="navhead">その他</div>
+    <nav class="pagetabs more" aria-label="その他"><a href="./appendix.html" class="active" aria-current="page">再現ガイド（巻末付録）</a></nav>
+    <nav class="xlink"><a href="https://uminomae.github.io/garden/kazokuyo.html" target="_blank" rel="noopener noreferrer">🌱 家族用ダッシュボード ↗</a></nav>
+    <div class="navhead">このページ</div>
+    <nav class="toc" aria-label="このページ"><a href="#about">この付録について</a><a href="#mechanism">仕組みの全体像</a><a href="#tree">ディレクトリ構成</a><a href="#rules">ルール10箇条</a><a href="#steps">再現手順</a><a href="#entry-garden">入口A ― 家庭菜園をそのまま模倣する</a><a href="#entry-generic">入口B ― 別のプロジェクトへ型を写す</a><a href="#patterns">型の一覧</a><a href="#prompt">コピペ用プロンプト</a></nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="site-menu">☰ メニュー</button>
+      <div class="breadcrumb">hatake-note / 巻末付録</div>
+      <div class="badge">再現ガイド</div>
+    </header>
+    <div class="wrap">
+<section id="about"><h2>この付録について</h2><div class="panel appendix-body"><p>この付録は、このサイト自体が使っている仕組み（正本のテキストファイル→生成スクリプト→無害チェック
+→公開用リポジトリへの反映→GitHub Pages による配信）を、読者自身のプロジェクトで再現するための
+ガイドである。仕組みの全体像・ディレクトリの型・運用ルール・手順までは共通部で、そのあと入口が2つに
+分かれる。</p>
+<ul>
+<li><strong>入口A ― 家庭菜園をそのまま模倣する</strong>: 同じ台帳構成・同じ PMBOK の語彙で自分の家庭菜園を管理したい人向け。</li>
+<li><strong>入口B ― 別のプロジェクトへ型を写す</strong>: 家庭菜園ではないプロジェクトに、このサイトの「型」（台帳の役割・
+KPI・変更ログ・教訓登録簿・リスク登録簿・品質ゲート・週次の較正）だけを写したい人向け。</li>
+</ul>
+<p>名前や中身は自分のプロジェクトに合わせて置き換えてよいが、役割の分担はそのまま踏襲することを勧める。
+末尾の「コピペ用プロンプト」に、共通部・入口A・入口B の3本の文面を置いた。</p></div></section><section id="mechanism"><h2>仕組みの全体像</h2><div class="panel appendix-body"><ul>
+<li>事実の正本（テキストファイル群）は、検索エンジンに出さない非公開のリポジトリに置く。1つの事実は
+1か所にしか書かない。</li>
+<li>生成スクリプトが正本を読み、公開用のページ（HTML）を組み立てる。公開側に手書きの写しは置かない。</li>
+<li>組み立てたページは、公開してよい内容かを機械で確かめる「無害チェック」を必ず通す（読んでよい
+正本の一覧＝allowlist、出してはいけない語の一覧＝denylist、の二重の網）。</li>
+<li>検査を通った生成物だけを、公開用の別リポジトリへ「毎回1コミットだけ」で置き換える（履歴を残さない）。</li>
+<li>公開用リポジトリを GitHub Pages が配信する。</li>
+<li>正本を更新して非公開リポジトリの main ブランチへ反映すると、CI（自動実行の仕組み）が生成から
+公開までを一続きで行う。</li>
+</ul></div></section><section id="tree"><h2>ディレクトリ構成</h2><div class="panel appendix-body"><p>以下は名前を中立化したテンプレート（実在のこのリポジトリの名前ではない）。役割の対応はこのサイトの
+実物と同じ形にしてある。</p>
+<pre><code>my-note/                          … 非公開リポジトリ（正本の置き場）
+├── data/                         … フラットファイルDB（1つの事実は1か所にだけ書く）
+│   ├── goals.md                  … KPI の正本（目標と達成率）
+│   ├── decisions.md              … 変更ログ台帳（採否と理由・追記式）
+│   ├── lessons.md                … 教訓登録簿（失敗と対策・追記専用）
+│   ├── trials.md                 … リスク登録簿（賭けを先に書き、結果を追記する）
+│   ├── processes.tsv             … プロセス台帳（行＝データ・出典つき）
+│   ├── documents-map.md          … 教科書の語彙とファイルの対応表
+│   ├── todo.md                   … バックログ（時間帯ごとのバケツ）
+│   └── harvest-log.tsv           … 実測ログ（予定と実績を比べる側の実績データ）
+├── tools/
+│   ├── build_site.py             … 正本を読んで公開ページ（HTML）を組み立てる
+│   ├── safety_check.py           … 公開前ゲート（allowlist・denylist・言い換え）
+│   └── publish.sh                … 生成→検査→公開用リポジトリへ単一コミットで反映
+└── .github/workflows/publish.yml … 非公開リポジトリの main への反映をきっかけに検査→発行を自動実行
+
+my-note-pages/                    … 公開用リポジトリ（生成物だけを置く・履歴を残さない）
+├── index.html ／ ほか            … 生成されたページ本体
+├── robots.txt                    … 検索エンジンに拾わせない設定（noindex 相当）
+└── .nojekyll                     … 静的ファイルをそのまま配信させるための空ファイル
+</code></pre>
+<p>役割の要点: <code>data/</code> の中身だけが唯一の正本（「本当のこと」はここにしか書かない）。<code>tools/</code> の
+スクリプト群は、正本を読んで公開ページを組み立て、検査し、置き換えるだけの機械的な処理を担う。
+公開用リポジトリ（<code>my-note-pages/</code>）は生成物の置き場でしかなく、自分では何も新しい情報を持たない。</p></div></section><section id="rules"><h2>ルール10箇条</h2><div class="panel appendix-body"><ol>
+<li>正本は1か所だけに置く（同じ事実を2つのファイルに書かない）。</li>
+<li>公開ページは全部「生成物」にする（手で書いた写しを公開側に置かない）。</li>
+<li>読んでよい正本ファイルは一覧（allowlist＝許可リスト）で決めておく（一覧に無いものは読ませない）。</li>
+<li>出してはいけない語も一覧（denylist＝禁止リスト）で決めておく（見つかったら公開を止める。一覧は
+緩めず、代わりに元の文章の方を直す）。</li>
+<li>内部のファイル名やパスは公開面に出さない（読者にも分かる言葉に言い換える）。</li>
+<li>公開用リポジトリへは毎回1コミットだけで置き換える（履歴を残さない＝force-push）。</li>
+<li>非公開リポジトリの main ブランチへ変更を反映したら、CI が検査から公開までを自動で行う
+（手順を人が飛ばせないようにする）。</li>
+<li>ログ・教訓・リスクの記録は追記専用にする（消さず積み重ねる）。</li>
+<li>決めたことは理由つきで台帳に残す（あとで「なぜそうしたか」を追えるようにする）。</li>
+<li>確認できていないことは「未確認」とそのまま書く（分からないことを分かったふりで書かない）。</li>
+</ol></div></section><section id="steps"><h2>再現手順</h2><div class="panel appendix-body"><ol>
+<li>GitHub のアカウントを作る（無料の範囲でよい）。</li>
+<li>非公開リポジトリを1つ作り、上のツリーどおりに正本ファイル群を初期化する（最初は中身が薄くても、
+ファイルと役割さえ決めておけば十分）。</li>
+<li>正本を読んで HTML を組み立てる生成スクリプトを書く（言語は自由。外部ライブラリに頼らない方が、
+のちのち動かす環境が変わっても壊れにくい）。</li>
+<li>公開前に必ず通す無害チェックを書く（allowlist＝読んでよい正本の一覧、denylist＝出してはいけない
+語の一覧、の二重の網）。</li>
+<li>公開用の別リポジトリをもう1つ作り、GitHub Pages を有効にする（公開したいブランチのルートを
+配信元に指定する）。</li>
+<li>公開用リポジトリに書き込める鍵（デプロイキー）を作って公開用リポジトリ側に登録し、対になる
+秘密鍵は非公開リポジトリの実行環境の「秘密変数」に登録する。</li>
+<li>非公開リポジトリの main への反映をきっかけに、生成→無害チェック→（通れば）公開用リポジトリへの
+反映、まで一続きで行う自動実行の仕組みを組む。</li>
+<li>あとは正本を書いて反映するだけの運用に入る。無害チェックで止まったら、チェックの側を緩めるの
+ではなく、文章の側を直す。</li>
+</ol></div></section><section id="entry-garden"><h2>入口A ― 家庭菜園をそのまま模倣する</h2><div class="panel appendix-body"><p>同じ領域（家庭菜園）なので、台帳の役割も語彙もほぼそのまま使える。読ませる順は次のとおり。</p>
+<ol>
+<li>この付録の共通部（仕組み・ディレクトリ構成・ルール10箇条・再現手順）。</li>
+<li><a href="./pmbok6.html">PMBOK 第6版</a> の 49プロセス表。「対応する正本・ツール」列に出てくる台帳の<strong>役割名</strong>が、
+このプロジェクトが実際に持っている台帳の一覧になっている。33文書の棚卸しは「何を持ち、何を
+テーラリングで削ったか」の一覧。</li>
+<li><a href="./registers.html">運用記録</a> は変更ログ・教訓登録簿・リスク登録簿の全量＝台帳の書式の実例。</li>
+<li><a href="./agile.html">アジャイル</a> はバックログの時間帯バケツと WIP の型。</li>
+</ol>
+<p>LLM に最初に求める成果物の型（付録の側で「こう返る」とは断定しない。求める形として渡す）:</p>
+<ul>
+<li>台帳の一覧＝役割／列（スキーマ）／追記式か上書き式か／誰が書くか（人か機械か）。</li>
+<li>最初の1週間の運用＝毎日書く台帳・毎週見直す数字。</li>
+</ul>
+<p>畝の名前・品目・気象の値は読者の圃場のものに置き換える。このサイトの実データを写す必要はない。</p></div></section><section id="entry-generic"><h2>入口B ― 別のプロジェクトへ型を写す</h2><div class="panel appendix-body"><p>領域が違うので、写すのは「型」だけになる。このサイトの中身は、領域に依らない部分と家庭菜園に固有の
+部分が同じ表に混ざって載っている。分けると次のようになる。</p>
+<ul>
+<li><strong>領域に依らない型</strong>（写す対象）: KPI（目標と達成率）・変更ログ（採否と理由）・教訓登録簿・リスク登録簿・
+バックログ（時間帯バケツ）・品質ゲート（公開前の機械検査）・週次の較正（予定と実績を並べて数字を直す）・
+「決めたことは理由つきで残す」「1つの事実は1か所」「確認できないことは未確認と書く」の運用。</li>
+<li><strong>家庭菜園に固有の部分</strong>（写さない・自分の領域の同等物に置き換える）: 積算温度・気象の実測・畝と作土・
+輪作・播種と定植の窓・品目と品種の台帳。</li>
+</ul>
+<p>読ませる順は、この付録の共通部 → 次節「型の一覧」（保証方式の7つの型＝領域に依らない骨格）→
+<a href="./pmbok7.html">PMBOK 第7版</a>（原則と領域＝領域に依らない）→ <a href="./pmbok6.html">PMBOK 第6版</a> の
+33文書棚卸し（何を持ち、何を削ったか）。</p>
+<p>LLM に最初に求める成果物の型:</p>
+<ul>
+<li><strong>三列表</strong>＝ PMBOK の語彙 ｜ このサイトでの実物（役割名） ｜ 自分のプロジェクトでの対応（無ければ
+「テーラリングで削る」と理由）。対象は 33のプロジェクト文書と 8つのパフォーマンス領域。</li>
+<li>最初に作る台帳5つ（KPI・変更ログ・教訓登録簿・リスク登録簿・バックログ）の列。</li>
+<li>週に1回見直す数字（KPI の実測と較正）。</li>
+<li>保証方式7つ（次節）を自分の領域で何が担うか、1行ずつ。</li>
+</ul>
+<p>家庭菜園に固有の項目は、三列表の右列で「該当なし」か「代替」として現れる。それ自体がテーラリングの
+実演になる（削る判断を理由つきで残すのが第7版の原則のひとつ）。</p></div></section><section id="patterns"><h2>型の一覧</h2><div class="panel appendix-body"><p>このサイトが 49プロセス・8領域・12原則のそれぞれに付けている「保証方式」（何がそのプロセスを
+守っているか）は、7つの型に収束している。台帳の名前や畝・気象は家庭菜園に固有だが、この7つは
+領域に依らない。入口B で写すのはこの表＝「人が決めて機械が検査する」分担の型である。件数は
+<a href="./pmbok6.html">PMBOK 第6版</a> の49プロセス表と <a href="./pmbok7.html">PMBOK 第7版</a> の8領域・12原則の
+保証方式列を集計したもの＝「49プロセスのうち何件／8領域＋12原則のうち何件」の順（表は正本から機械で
+作り直す＝手で書き換えない）。</p>
+<div class="tw"><table class="dtable">
+<thead>
+<tr>
+<th>保証方式</th>
+<th>件数</th>
+<th>担い手</th>
+<th>定義</th>
+<th>別の領域へ写すときの型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>検査</td>
+<td>13／4</td>
+<td>機械</td>
+<td>独立に書かれた2つの正本の数字・集合を突き合わせるスクリプト。ずれたら赤（定型ルーチン・記録時に走る）</td>
+<td>「正本Aの数字 ⇔ 正本Bの数字」を1行で言える対を選び、機械で比べる（自分の出力どうしを比べない）</td>
+</tr>
+<tr>
+<td>人の決裁</td>
+<td>9／6</td>
+<td>人</td>
+<td>本人が理由つきで採否を決め、変更ログ台帳に1行残す。機械は判定しない</td>
+<td>決めることの一覧（問い・選択肢・〆・答えで何が変わるか）を用意し、決裁は変更ログに理由つきで1行</td>
+</tr>
+<tr>
+<td>正本記録</td>
+<td>8／2</td>
+<td>人</td>
+<td>事実を追記専用の台帳へ書くこと自体が保証（消さない・上書きしない・過去は編集しない）</td>
+<td>追記専用ファイルを1つ決め、日付と「事実・判断・次」だけを書く</td>
+</tr>
+<tr>
+<td>生成器</td>
+<td>7／4</td>
+<td>機械</td>
+<td>正本から表・ページを機械で作り直す。公開側に手書きの写しを持たない</td>
+<td>「正本 → 生成物」を1行で書ける対だけ生成し、古いままの生成物を検出する検査を対で置く</td>
+</tr>
+<tr>
+<td>テーラリング</td>
+<td>6／0</td>
+<td>人</td>
+<td>持たないと決めた文書・プロセスを、理由つきで削る記録</td>
+<td>33文書・8領域の表で「削る」に理由を1行（削った記録も台帳に残す）</td>
+</tr>
+<tr>
+<td>発行ゲート</td>
+<td>4／3</td>
+<td>機械</td>
+<td>公開・反映の直前に迂回できない機械検査（許可リスト・禁止リスト・生成物の鮮度）</td>
+<td>公開スクリプトの入口に検査を置き、非0で止める。検査を緩めず文の方を直す</td>
+</tr>
+<tr>
+<td>フック</td>
+<td>2／1</td>
+<td>機械</td>
+<td>編集・コミットの直前直後に自動で走る小さな検査・促し（差分だけを見る）</td>
+<td>書いた直後に差分だけ見る軽い検査を1つ置く（重い検査は定型ルーチンへ）</td>
+</tr>
+</tbody>
+</table></div>
+<p>件数の検算: プロセス 49＝49行・領域と原則 20＝20行（この表は正本の集計＝件数と定義は生成物）。</p>
+<p>読み方: 「担い手」が人の型（人の決裁・正本記録・テーラリング）は判断そのもの＝LLM に代行させない。
+機械の型（検査・生成器・発行ゲート・フック）は、正本を2つ用意して独立に突き合わせる・正本から作り直す・
+公開の直前で止める・書いた直後に差分だけ見る、の4つの置き場の違いである。自分の領域でこの4つを
+どこに置くかが決まれば、道具立ての骨格は写せている。</p></div></section><section id="prompt"><h2>コピペ用プロンプト</h2><div class="panel appendix-body"><p>このページの URL を、お使いの LLM（対話型のAIアシスタント）に渡し、下記の文面をそのまま伝える。
+共通部の1本は仕組みの立ち上げ、入口A・B の2本は PMBOK の語彙と道具立ての写し取りを求める文面。
+必要な方だけ使えばよい（順に使うなら共通部→入口）。</p>
+<p><strong>共通部 ― 仕組みを立ち上げる</strong>（GitHub のアカウント取得から公開まで、①〜⑧の手順に沿ってステップバイ
+ステップで案内してもらう）:</p>
+<pre><code>https://uminomae.github.io/hatake-note/ の「巻末付録」を読み、これを模倣して、
+GitHub のアカウント取得から、非公開リポジトリのファイル群の作成、
+GitHub Pages による公開まで、ステップバイステップでガイドしてください。
+</code></pre>
+<p><strong>入口A ― 家庭菜園をそのまま模倣する</strong>:</p>
+<pre><code>https://uminomae.github.io/hatake-note/ を読んでください。
+私も家庭菜園を、このサイトと同じ台帳構成・同じ PMBOK の語彙で管理したい。
+「巻末付録」のディレクトリ構成を初期化し、「PMBOK 第6版」ページの 49プロセス表の
+「対応する正本・ツール」列に出てくる台帳をすべて列挙して、それぞれの役割・列（スキーマ）・
+追記式か上書き式か・誰が書くか（人／機械）を提案してください。
+最後に、最初の1週間の運用（毎日書く台帳・毎週見直す数字）を示してください。
+</code></pre>
+<p><strong>入口B ― 別のプロジェクトへ型を写す</strong>（「〇〇」だけ自分のプロジェクト名に置き換える）:</p>
+<pre><code>私のプロジェクトは「〇〇」です。
+https://uminomae.github.io/hatake-note/ は、家庭菜園を PMBOK の語彙と道具立てで管理している例です。
+このサイトの「巻末付録」を読み、次の三列表を作ってください＝
+PMBOK の語彙 ｜ このサイトでの実物（役割名） ｜ 私のプロジェクトでの対応（無ければ「テーラリングで削る」と理由）。
+対象は 33のプロジェクト文書と 8つのパフォーマンス領域。
+続いて、その表から最初に作る台帳5つ（KPI・変更ログ・教訓登録簿・リスク登録簿・バックログ）の列と、
+週に1回見直す数字（KPI の実測と較正）を提案してください。
+最後に、「巻末付録」の「型の一覧」にある保証方式7つを、私のプロジェクトでは
+それぞれ何で担うか（人が決めるもの・機械で検査するもの）を1行ずつ書いてください。
+決めたことは理由つきで残す運用にします。
+</code></pre>
+<p>このページ自体のリンクを一緒に渡すと、LLM がここに書かれた役割分担やルールを踏まえて案内できる。
+入口B が読者の LLM で実際にどこまで動くかは、このサイトの側でも実測している。2026-08-18 の実測（仮置きの
+プロジェクト「同人誌の年2回刊行」・文脈を持たない新規セッションの LLM に上のプロンプトをそのまま渡した）では、
+三列表は 33文書・8領域とも全行が埋まり、削る行には理由が付いた。読者側の LLM は付録だけでなく
+<a href="./pmbok6.html">PMBOK 第6版</a>・<a href="./pmbok7.html">PMBOK 第7版</a>・<a href="./registers.html">運用記録</a> を自分で辿って
+埋めていた＝付録は入口で、実物は各ページが持つ。</p></div></section>
+    </div>
+    <footer>hatake-note ― 検索避け設定あり（noindex）。全ての数値は非公開の一次データから自動生成。</footer>
+  </div>
+</div>
+<script data-hatake-toc="1">
+(function(){
+  var toc = document.querySelector('.sidebar nav.toc');
+  if(!toc || !('IntersectionObserver' in window)) return;
+  var links = {};
+  Array.prototype.forEach.call(toc.querySelectorAll('a[href^="#"]'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.wrap > section[id]'))
+    .filter(function(s){ return links[s.id]; });
+  if(!sections.length) return;
+  /* 〔#141〕ネストTOC の子（a.sub＝pmbok6 の知識エリア #ka-N・pmbok7 の 8領域）も監視する＝
+     親の節に加えて、その中で最後に見えている子を .active にする（親と子の2段で現在位置を出す） */
+  var subs = Array.prototype.slice.call(toc.querySelectorAll('a.sub[href^="#"]'))
+    .map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); })
+    .filter(function(el){ return el; });
+  var visible = Object.create(null);
+  function apply(){
+    var activeId = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (visible[sections[i].id]) activeId = sections[i].id;
+    }
+    var activeSub = null;
+    if (activeId) {
+      var sec = document.getElementById(activeId);
+      for (var j = 0; j < subs.length; j++) {
+        if (visible[subs[j].id] && sec.contains(subs[j])) activeSub = subs[j].id;
+      }
+    }
+    for (var id in links) links[id].classList.toggle('active', id === activeId || id === activeSub);
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){ visible[entry.target.id] = entry.isIntersecting; });
+    apply();
+  }, { rootMargin: '0px 0px -70% 0px', threshold: 0 });
+  sections.forEach(function(s){ io.observe(s); });
+  subs.forEach(function(s){ io.observe(s); });
+})();
+/* 〔#141〕drawer（スマホのメニュー）・fragment で来た details と親を開く・sticky ヘッダの高さを --hdr へ */
+(function(){
+  var b = document.querySelector('.menu-btn'), sb = document.getElementById('site-menu');
+  /* ★モーダルの a11y〔#141 Codex 要修正4〕: 開いたら aside を role=dialog/aria-modal にして✕へ focus・
+     .main を inert・Tab を aside 内で巡回・閉じたら属性を戻しメニューボタンへ focus（リンク遷移は除く）・
+     広い画面へ resize したら閉じる（デスクトップでは aside は常設ナビ＝dialog 属性を残さない） */
+  var mainEl = document.querySelector('.app > .main');
+  var FOC = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  var mq = window.matchMedia('(min-width: 821px)');
+  function isOpen(){ return document.body.classList.contains('menu-open'); }
+  /* ★閉じた drawer（モバイル）は inert＝Tab 順・支援技術から外す〔#141 Codex 再レビュー 要修正2〕。
+     開いたら外す・デスクトップ幅（常設ナビ）でも外す。CSS の visibility:hidden と二重（JS 無しでも隠れる） */
+  function syncInert(){
+    if (!sb) return;
+    if (!mq.matches && !isOpen()) sb.setAttribute('inert', ''); else sb.removeAttribute('inert');
+  }
+  function setMenu(o, ret){
+    if(!b) return;
+    document.body.classList.toggle('menu-open', o); b.setAttribute('aria-expanded', o ? 'true' : 'false');
+    if (mainEl) { if (o) mainEl.setAttribute('inert', ''); else mainEl.removeAttribute('inert'); }
+    syncInert();
+    if (sb) {
+      if (o) { sb.setAttribute('role', 'dialog'); sb.setAttribute('aria-modal', 'true'); sb.setAttribute('aria-label', 'メニュー');
+               var c = sb.querySelector('.drawer-close') || sb.querySelector(FOC); if (c) c.focus(); }
+      else { sb.removeAttribute('role'); sb.removeAttribute('aria-modal'); sb.removeAttribute('aria-label');
+             if (ret !== false) b.focus({ preventScroll: true }); }
+    }
+  }
+  syncInert();
+  if (b && sb) {
+    b.addEventListener('click', function(){ setMenu(!isOpen()); });
+    document.addEventListener('click', function(e){
+      if (!isOpen()) return;
+      if (sb.contains(e.target) && e.target.closest('a')) setMenu(false, false);
+      else if (e.target.closest('[data-menu-close]')) setMenu(false);
+    });
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { setMenu(false); return; }
+      if (e.key !== 'Tab') return;
+      var f = [].slice.call(sb.querySelectorAll(FOC)).filter(function(x){ return x.offsetParent !== null; });
+      if (!f.length) return;
+      var a = document.activeElement;
+      if (e.shiftKey && (a === f[0] || !sb.contains(a))) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (a === f[f.length - 1] || !sb.contains(a))) { e.preventDefault(); f[0].focus(); }
+    });
+    function onmq(){ if (mq.matches && isOpen()) setMenu(false, false); syncInert(); }
+    if (mq.addEventListener) mq.addEventListener('change', onmq); else if (mq.addListener) mq.addListener(onmq);
+  }
+  function openTo(hash){
+    if (!hash || hash.length < 2) return;
+    var el = document.getElementById(hash.slice(1)); if (!el) return;
+    var n = el; while (n) { if (n.tagName === 'DETAILS') n.open = true; n = n.parentElement; }
+    el.scrollIntoView({ block: 'start' });
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]'); if (!a) return;
+    var h = a.getAttribute('href'); if (!document.getElementById(h.slice(1))) return;
+    e.preventDefault(); if (history.replaceState) history.replaceState(null, '', h); openTo(h);
+  });
+  window.addEventListener('hashchange', function(){ openTo(location.hash); });
+  var hd = document.querySelector('.topbar');
+  function hdr(){ if (hd) document.documentElement.style.setProperty('--hdr', hd.offsetHeight + 'px'); }
+  window.addEventListener('resize', hdr); hdr();
+  if (location.hash) openTo(location.hash);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1290 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>hatake-note ― PMBOK第6版</title>
+<style>
+:root{--bg:#f4f6f9;--panel:#ffffff;--ink:#1b2733;--sub:#5a6b7d;--line:#e2e7ee;
+--accent:#0b5fff;--accent-ink:#ffffff;--navy:#111d33;--navy-ink:#c9d6ea;
+--ok:#0b8a3d;--ok-bg:#e6f6ec;--no:#b3261e;--no-bg:#fbe9e7;--hold:#8a5a00;--hold-bg:#fdf1da;
+--s-plan:#2a78d6;--s-actual:#eb6834;}
+@media (prefers-color-scheme: dark){:root{--bg:#0f1520;--panel:#161d2b;--ink:#e7edf6;--sub:#98a6ba;
+--line:#263041;--navy:#0a0f1a;--navy-ink:#c9d6ea;--ok:#5fd68b;--ok-bg:#123321;--no:#ff8a80;--no-bg:#3a1613;
+--hold:#f0c674;--hold-bg:#3a2c0c;--s-plan:#3987e5;--s-actual:#d95926;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Kaku Gothic ProN",
+"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.7}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex:0 0 220px;background:var(--navy);color:var(--navy-ink);padding:20px 14px;
+position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto}
+.brand{font-weight:700;font-size:17px;color:#fff;margin-bottom:4px}
+.brand-sub{font-size:11px;color:#8fa2c2;margin-bottom:18px}
+.pagetabs{display:flex;flex-direction:column;gap:2px;margin-bottom:18px;padding-bottom:16px;
+border-bottom:1px solid rgba(255,255,255,.12)}
+.pagetabs a{color:var(--navy-ink);text-decoration:none;font-size:13px;font-weight:600;padding:8px 10px;
+border-radius:6px}
+.pagetabs a:hover{background:rgba(255,255,255,.08);color:#fff}
+.pagetabs a.active{background:var(--accent);color:#fff}
+.sidebar .navhead{font-size:10.5px;letter-spacing:.06em;color:#8fa2c2;margin:0 0 4px 10px;text-transform:uppercase}
+.sidebar nav{display:flex;flex-direction:column;gap:2px}
+.sidebar nav.toc a.sub{font-size:12px;padding:5px 10px 5px 22px;color:#a9b8d0}
+.sidebar a{color:var(--navy-ink);text-decoration:none;font-size:13px;padding:8px 10px;border-radius:6px}
+.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar nav.toc a{border-left:3px solid transparent}
+.sidebar nav.toc a.active{background:rgba(11,95,255,.28);color:#fff;font-weight:700;
+border-left-color:var(--accent)}
+.sidebar nav.xlink{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.sidebar nav.xlink a{font-size:12px;color:#8fa2c2}
+.main{flex:1;min-width:0;padding:0 0 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;
+background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+.breadcrumb{font-size:13px;color:var(--sub)}
+.badge{font-size:11px;background:var(--accent);color:var(--accent-ink);padding:4px 10px;border-radius:999px;font-weight:600}
+.wrap{padding:22px 28px}
+.kpirow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:8px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .label{font-size:11px;color:var(--sub);margin-bottom:6px}
+.kpi .value{font-size:26px;font-weight:700;color:var(--accent)}
+.kpi .meta{font-size:11px;color:var(--sub);margin-top:4px}
+section{margin:34px 0}
+h2{font-size:18px;border-left:4px solid var(--accent);padding-left:10px;margin:0 0 6px}
+h3{font-size:14px}
+.lede{color:var(--sub);font-size:13px;margin:0 0 14px}
+.domaincard .general{color:var(--sub);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:0 0 10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.tw{overflow-x:auto}
+table.dtable{width:100%;border-collapse:collapse;font-size:13px}
+table.dtable th{text-align:left;color:var(--sub);font-weight:600;font-size:11px;text-transform:uppercase;
+letter-spacing:.03em;border-bottom:1px solid var(--line);padding:8px 10px;white-space:nowrap}
+table.dtable td{border-bottom:1px solid var(--line);padding:9px 10px;vertical-align:top}
+table.dtable tr:last-child td{border-bottom:none}
+table.dtable.matrix td:first-child{white-space:nowrap;font-weight:600}
+table.dtable.matrix th{white-space:normal}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.no{background:var(--no-bg);color:var(--no)}
+.pill.hold{background:var(--hold-bg);color:var(--hold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* ── モバイル〔#141〕: サイドバーは drawer（off-canvas）へ。トップバーが「ページ名＋メニューボタン」になる。
+   横一列に並べたナビもTOCも置かない（横スクロールするナビを作らない）。 */
+.menu-btn{display:none;appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+font:inherit;font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;min-height:38px;
+flex:0 0 auto}
+.menu-btn[aria-expanded="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.drawer-backdrop{display:none;position:fixed;inset:0;background:#0008;z-index:8}
+.sidebar .drawer-close{display:none}
+.wrap [id]{scroll-margin-top:calc(var(--hdr,64px) + 8px)}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}
+.app{flex-direction:column}
+.menu-btn{display:inline-block}
+/* ★閉じた drawer は Tab 順からも外す〔#141 Codex 再レビュー 要修正2〕＝translateX だけだと画面外の✕・リンクへ
+   初期 Tab が入る。visibility:hidden（CSS だけで効く・transform の遷移が終わってから隠す）＋JS が inert を付ける */
+.sidebar{position:fixed;top:0;left:0;bottom:0;height:100vh;width:min(86vw,320px);flex:none;z-index:9;
+transform:translateX(-102%);visibility:hidden;transition:transform .18s ease-out,visibility 0s linear .18s;box-shadow:2px 0 12px #0006}
+body.menu-open .sidebar{transform:none;visibility:visible;transition:transform .18s ease-out,visibility 0s}
+body.menu-open .drawer-backdrop{display:block}
+body.menu-open{overflow:hidden}
+.sidebar .drawer-close{display:inline-block;appearance:none;border:1px solid rgba(255,255,255,.35);
+background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:12px;font-weight:700;padding:5px 10px;
+border-radius:999px;cursor:pointer;float:right;margin:-2px 0 0}
+.topbar{padding:10px 14px;gap:8px}
+.topbar .breadcrumb{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink)}
+.topbar .badge{display:none}
+.wrap{padding:16px 14px}}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px}
+.tag b{color:var(--accent)}
+.domaincard{margin-bottom:12px;padding:0}
+.domaincard>summary{cursor:pointer;padding:14px 20px}
+.domaincard>summary h3{display:inline;margin:0;font-size:15px}
+.domaincard>.body{padding:0 20px 18px}
+.domaincard h3{margin:0 0 4px;font-size:15px}
+details.flush{border-top:1px solid var(--line)}
+details.flush>summary{cursor:pointer;font-weight:600;padding:9px 4px;font-size:13px}
+details.flush>.body{padding:4px 4px 12px;font-size:13px}
+.months{border-bottom:1px solid var(--line);margin-top:6px}
+p.more{margin:6px 0 18px;font-size:13px}
+.sidebar nav.pagetabs.more a{font-size:12.5px}
+.figure{overflow-x:auto;max-height:520px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;
+background:#fdfdfb}
+.figure svg{display:block;min-width:520px}
+.chartfig{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+padding:14px 16px 6px}
+.chartfig svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto}
+.chart-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:2px}
+.chart-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;
+vertical-align:middle}
+.chart-caption{font-size:11px;color:var(--sub);margin:6px 0 4px}
+.domaincard a{color:var(--accent)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.tile{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+text-decoration:none;color:var(--ink)}
+.tile b{display:block;color:var(--accent);font-size:15px;margin-bottom:6px}
+.tile span{font-size:12px;color:var(--sub)}
+.mcell{text-align:center}
+.mcell-n{font-size:11px;color:var(--sub)}
+.mcell-badges{display:flex;gap:3px;justify-content:center;margin-top:2px;flex-wrap:wrap}
+.mempty{color:var(--sub)}
+.enname{color:var(--sub);font-size:11px;font-style:italic}
+.refnote{color:var(--sub);font-size:10px}
+.itto-grid{grid-template-columns:1fr 1fr}
+@media (max-width:820px){.itto-grid{grid-template-columns:1fr}}
+.itto-card h3{color:var(--accent)}
+.itto-row{display:flex;gap:8px;font-size:13px;padding:4px 0;border-top:1px dashed var(--line)}
+.itto-row:first-of-type{border-top:none}
+.itto-k{flex:0 0 56px;font-size:10px;font-weight:700;color:var(--sub);padding-top:2px}
+.kacard{margin-bottom:20px}
+.kacard summary{cursor:pointer;font-weight:600;padding:10px 4px}
+.appendix-body p{margin:0 0 10px}
+.appendix-body ol,.appendix-body ul{margin:0 0 10px;padding-left:1.4em}
+.appendix-body li{margin:0 0 8px}
+.appendix-body p:last-child{margin-bottom:0}
+.appendix-body .tw{margin:0 0 10px}
+.appendix-body table.dtable{min-width:600px}
+.appendix-body table.dtable td:first-child,.appendix-body table.dtable td:nth-child(2){white-space:nowrap}
+pre{background:var(--navy);color:var(--navy-ink);border-radius:8px;padding:14px 16px;
+overflow-x:auto;font-size:12px;line-height:1.6;margin:0 0 10px}
+pre code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+footer{padding:24px 28px;color:var(--sub);font-size:12px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="drawer-backdrop" data-menu-close="1"></div>
+  <aside class="sidebar" id="site-menu">
+    <button type="button" class="drawer-close" data-menu-close="1" aria-label="メニューを閉じる">✕ 閉じる</button>
+    <div class="brand">🌱 hatake-note</div>
+    <div class="brand-sub">家庭菜園プロジェクト・ダッシュボード</div>
+    <div class="navhead">ページ</div>
+    <nav class="pagetabs" aria-label="ページ"><a href="./index.html">概要ダッシュボード</a><a href="./pmbok7.html">PMBOK 第7版</a><a href="./pmbok6.html" class="active" aria-current="page">PMBOK 第6版</a><a href="./agile.html">アジャイル生産管理</a><a href="./registers.html">運用記録</a></nav>
+    <div class="navhead">その他</div>
+    <nav class="pagetabs more" aria-label="その他"><a href="./appendix.html">再現ガイド（巻末付録）</a></nav>
+    <nav class="xlink"><a href="https://uminomae.github.io/garden/kazokuyo.html" target="_blank" rel="noopener noreferrer">🌱 家族用ダッシュボード ↗</a></nav>
+    <div class="navhead">このページ</div>
+    <nav class="toc" aria-label="このページ"><a href="#matrix">5×10 マトリクス</a><a href="#processes">49プロセス詳細</a><a class="sub" href="#ka-1">統合マネジメント</a><a class="sub" href="#ka-2">スコープ・マネジメント</a><a class="sub" href="#ka-3">スケジュール・マネジメント</a><a class="sub" href="#ka-4">コスト・マネジメント</a><a class="sub" href="#ka-5">品質マネジメント</a><a class="sub" href="#ka-6">資源マネジメント</a><a class="sub" href="#ka-7">コミュニケーション・マネジメント</a><a class="sub" href="#ka-8">リスク・マネジメント</a><a class="sub" href="#ka-9">調達マネジメント</a><a class="sub" href="#ka-10">ステークホルダー・マネジメント</a><a href="#itto">ITTO 展開カード</a><a href="#documents">ドキュメント体系（知識エリア）</a><a href="#documents33">33のプロジェクト文書 棚卸し</a></nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="site-menu">☰ メニュー</button>
+      <div class="breadcrumb">hatake-note / PMBOK 第6版の体験</div>
+      <div class="badge">PMBOK 第6版・49プロセス</div>
+    </header>
+    <div class="wrap">
+
+    <section id="matrix">
+      <h2>5プロセス群 × 10知識エリア マトリクス</h2>
+      <p class="lede">セル＝そのマスに属するプロセス数と、実体の内訳（◎実体あり／△部分的／✕テーラリングで削除）。
+      空白マスは無い（49プロセス全てに状態が付いている）。</p>
+      <div class="tw"><table class="dtable matrix">
+<thead><tr>
+<th>プロセス群</th>
+<th>統合マネジメント</th>
+<th>スコープ・マネジメント</th>
+<th>スケジュール・マネジメント</th>
+<th>コスト・マネジメント</th>
+<th>品質マネジメント</th>
+<th>資源マネジメント</th>
+<th>コミュニケーション・マネジメント</th>
+<th>リスク・マネジメント</th>
+<th>調達マネジメント</th>
+<th>ステークホルダー・マネジメント</th>
+</tr></thead><tbody>
+<tr>
+<td>立上げ</td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill no">✕1</span></div></div></td>
+</tr>
+<tr>
+<td>計画</td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">4件</div><div class="mcell-badges"><span class="pill ok">◎3</span><span class="pill hold">△1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">5件</div><div class="mcell-badges"><span class="pill ok">◎5</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">3件</div><div class="mcell-badges"><span class="pill ok">◎2</span><span class="pill hold">△1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">2件</div><div class="mcell-badges"><span class="pill ok">◎2</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">5件</div><div class="mcell-badges"><span class="pill ok">◎3</span><span class="pill hold">△2</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+</tr>
+<tr>
+<td>実行</td>
+<td><div class="mcell"><div class="mcell-n">2件</div><div class="mcell-badges"><span class="pill ok">◎2</span></div></div></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">3件</div><div class="mcell-badges"><span class="pill ok">◎2</span><span class="pill hold">△1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td><div class="mcell"><div class="mcell-n">2件</div><div class="mcell-badges"><span class="pill ok">◎2</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">2件</div><div class="mcell-badges"><span class="pill ok">◎2</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill no">✕1</span></div></div></td>
+</tr>
+<tr>
+<td>終結</td>
+<td><div class="mcell"><div class="mcell-n">1件</div><div class="mcell-badges"><span class="pill ok">◎1</span></div></div></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+<td><span class="mempty">—</span></td>
+</tr>
+</tbody></table></div>
+    </section>
+
+    <section id="processes">
+      <h2>知識エリアごとの49プロセス詳細</h2>
+      <p class="lede">このプロジェクトの実体・対応する正本ツールを1プロセス1行で列挙する。日本語のプロセス名は
+      一次情報（PMI）に本セッションから到達できず、複数の独立した二次情報の一致でのみ確認した参考訳
+      （出典は非公開の原本に保持）。原文名（英語）を正とする。右端の3列＝そのプロセスが回り続けることを何が
+      保証するか（保証方式・保証手段・起動条件）。✕（テーラリングで削除）の行では 保証手段＝代替統制・
+      起動条件＝再点検条件 と読む。</p>
+      <details class="kacard" id="ka-1"><summary>統合マネジメント（7 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>立上げ</td>
+<td>プロジェクト憲章の作成</td>
+<td><span class="enname">Develop Project Charter</span></td>
+<td>品目を100品目目標へ採用する決裁そのものが、その品目の作付けオーダーを始動する根拠になる。</td>
+<td>品目台帳（台帳更新ツール species add）／変更ログ台帳</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>人の決裁</td>
+<td>変更ログ台帳「採否」（品目の採用＝台帳更新ツール species add と対）</td>
+<td>提案時（品目の採用）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>プロジェクトマネジメント計画書の作成</td>
+<td><span class="enname">Develop Project Management Plan</span></td>
+<td>年間の面積・輪作・畝割当をまとめて1つの実行計画にする。</td>
+<td>年次スコープ計画書／四半期実行計画／畝別実行計画</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>資源容量チェックツール（作土の取り合い）／内部監査（正本突合検査） [F]（畝割当⇔bed-map）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>プロジェクト作業の指揮・マネジメント</td>
+<td><span class="enname">Direct and Manage Project Work</span></td>
+<td>todoの時間バケツに従って播種・定植・灌水などの作業を実際に回す。</td>
+<td>（内部台帳）／作業手順書</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>整合検査ツール [12]（済んだ作業の消し忘れ）／整合検査ツール [7]（今日・明日の日付）</td>
+<td>発行時／編集時（自動フック）</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>プロジェクト知識のマネジメント</td>
+<td><span class="enname">Manage Project Knowledge</span></td>
+<td>起きた失敗・発見を教訓登録簿へ4点セットで蓄積し、次の判断に使う（暗黙知の形式知化）。</td>
+<td>教訓登録簿</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>正本記録</td>
+<td>教訓登録簿 4点セット（追記専用・自動フック が促す）</td>
+<td>ログ記録時</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>プロジェクト作業の監視・コントロール</td>
+<td><span class="enname">Monitor and Control Project Work</span></td>
+<td>品質チェックリスト（自動検査）の39項目検査で正本間の不整合・作業漏れを継続的に検出する。</td>
+<td>品質チェックリスト（自動検査）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>品質チェックリスト（自動検査） --quiet（全項目）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））／発行時</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>統合変更管理</td>
+<td><span class="enname">Perform Integrated Change Control</span></td>
+<td>品目・数量・畝の変更提案を変更ログ台帳で採否判定してから正本へ反映する（庭の計画変更ワークフロー）。</td>
+<td>変更ログ台帳／運用規約書「庭の計画変更ワークフロー」</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>人の決裁</td>
+<td>変更ログ台帳「採否」（✕／△／🔁＋理由1文）</td>
+<td>提案時（計画変更ワークフロー）</td>
+</tr>
+<tr>
+<td>終結</td>
+<td>プロジェクトやフェーズの終結</td>
+<td><span class="enname">Close Project or Phase</span></td>
+<td>収穫・撤去が済んだ作付けを作業オーダー台帳の状態列で終了させ、次作へ畝を明け渡す。</td>
+<td>作業オーダー台帳（台帳更新ツールの状態遷移）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>正本記録</td>
+<td>台帳更新ツール（作業オーダー台帳 状態列＝自動フック がガード）</td>
+<td>報告時（収穫・撤去の本人報告）</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-2"><summary>スコープ・マネジメント（6 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>スコープマネジメントの計画</td>
+<td><span class="enname">Plan Scope Management</span></td>
+<td>何を「100品目」のスコープに含めるかの判断基準（栄養自給率・食べられる週）を定義する。</td>
+<td>目標シート</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>生成ツール／生成ツール（目標シート の生成ブロック）</td>
+<td>編集時（台帳更新ツール Tx.commit）／発行時（生成物レジストリ check-public）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>要求事項の収集</td>
+<td><span class="enname">Collect Requirements</span></td>
+<td>家族が何を食べたいか・栄養素として何が要るかを積み上げ、需給に反映する。</td>
+<td>需給モデル台帳／収穫予定表</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>内部監査（正本突合検査） [B]（栄養価⇔nutrition-ref）[E]（占有㎡⇔面積）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>スコープの定義</td>
+<td><span class="enname">Define Scope</span></td>
+<td>年ごとに作付ける品目・作型・株数を確定させる。</td>
+<td>四半期実行計画</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>人の決裁</td>
+<td>四半期実行計画「前提2026-07-23-決定」</td>
+<td>年次（作季の前）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>WBSの作成</td>
+<td><span class="enname">Create WBS</span></td>
+<td>畝という物理的な最小単位（作土39.4㎡）がスコープを分解する役目を果たす。正式なWBS図・WBS辞書はテーラリングで持たない（PMBOK対応語彙集「テーラリングの記録」節＝WBS辞書の行と同じ理由）。</td>
+<td>資源カレンダー</td>
+<td><span class="pill hold">△</span> <span class="refnote">参考訳</span></td>
+<td>テーラリング</td>
+<td>PMBOK対応語彙集「テーラリングの記録」（WBS辞書の行）</td>
+<td>年次（作土の再測量時に見直す）</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>スコープの妥当性確認</td>
+<td><span class="enname">Validate Scope</span></td>
+<td>収穫実測（収穫実績台帳）が計画（需給モデル台帳のモデル値）と一致するかを確かめ、成果物を受け入れる。</td>
+<td>収穫実績台帳</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>整合検査ツール [42]（播種日→収穫週の検算）／生成ツール --actual（実測突き合わせ）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>スコープのコントロール</td>
+<td><span class="enname">Control Scope</span></td>
+<td>品目の追加・削除で作土の取り合いが起きないか資源容量チェックツールで検出し、上位裁定（親issue）で範囲を確定する。</td>
+<td>資源容量チェックツール</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>資源容量チェックツール [39]（同じ週の占有㎡⇔作土）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-3"><summary>スケジュール・マネジメント（6 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>スケジュールマネジメントの計画</td>
+<td><span class="enname">Plan Schedule Management</span></td>
+<td>週モデルとGDDモデルのどちらで日程を作るかという方法の使い分けそのもの。</td>
+<td>積算温度モデル定数表／標準工程マスタ</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>整合検査ツール [33]（律速が熱か暦か）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>アクティビティの定義</td>
+<td><span class="enname">Define Activities</span></td>
+<td>播種→育苗→定植→収穫という個々の作業を作付けオーダー（作業オーダー台帳の1行）に分解する。</td>
+<td>作業オーダー台帳</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>正本記録</td>
+<td>台帳更新ツール plan／assign（作業オーダー台帳 の1行＝1バー）</td>
+<td>提案時（作付け候補）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>アクティビティの順序設定</td>
+<td><span class="enname">Sequence Activities</span></td>
+<td>輪作年限（輪作年限資料）に基づいて前作・今作・次作の順序を決める。</td>
+<td>輪作年限資料／畝別実行計画</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>生成ツール [31]（bed-plan の連作ブロック）</td>
+<td>編集時／セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>アクティビティ所要期間の見積り</td>
+<td><span class="enname">Estimate Activity Durations</span></td>
+<td>積算温度（GDD）と週モデルで播種から収穫までの所要日数を見積る。</td>
+<td>逆算ツール／標準工程マスタ</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>逆算ツール project（GDD逆算）＋整合検査ツール [38]（育苗週数の出所）</td>
+<td>提案時（作付け候補の逆算）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>スケジュールの作成</td>
+<td><span class="enname">Develop Schedule</span></td>
+<td>品目ビュー・畝ビューのガントSVGとして年間スケジュールを描画する。</td>
+<td>資源ヒストグラム（工程表）（工程表生成ツール）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>工程表生成ツール --update（資源ヒストグラム（工程表） の SVG 2枚）</td>
+<td>編集時（台帳更新ツール Tx.commit）／発行時（生成物レジストリ check-public）</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>スケジュールのコントロール</td>
+<td><span class="enname">Control Schedule</span></td>
+<td>気象実測でGDD較正定数を更新し、播種可能な最終日を逆算し直す。</td>
+<td>逆算ツール limit</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>気象実測取込ツール（実測追記）→ 逆算ツール limit（播種可能最終日の逆算）</td>
+<td>日次（CI の気象取得・定型ルーチン）</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-4"><summary>コスト・マネジメント（4 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>コストマネジメントの計画</td>
+<td><span class="enname">Plan Cost Management</span></td>
+<td>「買わずに済むなら買わない」を先に確認してから手配へ進む購入提案ルールそのもの。</td>
+<td>運用規約書「購入提案のルール」</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>人の決裁</td>
+<td>運用規約書「purchase-rule」</td>
+<td>提案時（購入）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>コストの見積り</td>
+<td><span class="enname">Estimate Costs</span></td>
+<td>必要な資材の量と用途を見積り、手配の締切と紐づける。</td>
+<td>調達計画</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>正本記録</td>
+<td>台帳更新ツール procure（調達計画・🛒 表は 生成ツール が生成）</td>
+<td>提案時（手配）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>予算の設定</td>
+<td><span class="enname">Determine Budget</span></td>
+<td>事前の予算枠は持たず都度判断のため、正式な予算設定プロセスはテーラリングで簡略化している。</td>
+<td>コスト実績台帳（非公開）（非公開）</td>
+<td><span class="pill hold">△</span> <span class="refnote">参考訳</span></td>
+<td>テーラリング</td>
+<td>PMBOK対応語彙集「テーラリングの記録」（EVM の行＝会計を回さない）</td>
+<td>年次（見直し）</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>コストのコントロール</td>
+<td><span class="enname">Control Costs</span></td>
+<td>購入のたびコスト実績台帳（非公開）に明細を記帳し、集計して実績を把握する。EVMは使わず実測較正で代替する（PMBOK対応語彙集「テーラリングの記録」節）。</td>
+<td>コスト実績台帳（非公開）／コスト集計ツール</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>コスト集計ツール --update（支出サマリ）＋内部監査（正本突合検査） [D]（支出品目⇔species）</td>
+<td>購入時（台帳更新ツール bought）</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-5"><summary>品質マネジメント（3 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>品質マネジメントの計画</td>
+<td><span class="enname">Plan Quality Management</span></td>
+<td>発行前の自動検査39項目をゲートとして事前に設計する（後から直さない）。</td>
+<td>品質チェックリスト（自動検査）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>品質チェックリスト（自動検査）（冒頭の検査一覧＝新検査は「どの正本→どの正本」1行と同一コミット）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））／発行時</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>品質のマネジメント</td>
+<td><span class="enname">Manage Quality</span></td>
+<td>正本どうしを独立に突き合わせる検査で「正しく見えるが実は矛盾」を防ぐ。</td>
+<td>内部監査（正本突合検査）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>内部監査（正本突合検査） [32]（正本どうしの突き合わせ）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>品質のコントロール</td>
+<td><span class="enname">Control Quality</span></td>
+<td>品質チェックリスト（自動検査）をログ記録・発行前に毎回実行し、指摘を都度直す。</td>
+<td>品質チェックリスト（自動検査） --quiet</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>発行ゲート</td>
+<td>外部公開バッチ／外部公開バッチ（PM向け）（無害チェック・結合点・生成物の鮮度）</td>
+<td>発行時</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-6"><summary>資源マネジメント（6 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>資源マネジメントの計画</td>
+<td><span class="enname">Plan Resource Management</span></td>
+<td>畝別早見表で施肥・資材をどう割り当てるかの方針を持つ。</td>
+<td>資源カレンダー</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>フック</td>
+<td>自動フック（畝変更→他ビュー同期）＋整合検査ツール [11]</td>
+<td>編集時</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>アクティビティ資源の見積り</td>
+<td><span class="enname">Estimate Activity Resources</span></td>
+<td>占有㎡という単位で各作付けオーダーが作土をどれだけ使うかを見積る。</td>
+<td>作業オーダー台帳（占有列）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>正本記録</td>
+<td>台帳更新ツール assign --占有／occupy（作業オーダー台帳 占有㎡＝引数不足で止まる）</td>
+<td>提案時（畝の確定）</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>資源の獲得</td>
+<td><span class="enname">Acquire Resources</span></td>
+<td>フロー（人尿・落ち葉等）→ストックの余剰→採取→不足分だけ手配、の順に資材を確保する。</td>
+<td>前提条件ログ §0.5／調達計画</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>人の決裁</td>
+<td>前提条件ログ「1-手元資源--フロー継続的に出るもの」（フロー→ストック→採取→手配の順）</td>
+<td>提案時（手配）</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>チームの育成</td>
+<td><span class="enname">Develop Team</span></td>
+<td>本人＋LLMの分担そのもの。人数が本人＋LLMのみのため、正式な育成活動は限定的。</td>
+<td>運用規約書「ユーザープロフィール」</td>
+<td><span class="pill hold">△</span> <span class="refnote">参考訳</span></td>
+<td>テーラリング</td>
+<td>PMBOK対応語彙集「テーラリングの記録」（会議体・任命書式を持たない）</td>
+<td>年次（見直し）</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>チームのマネジメント</td>
+<td><span class="enname">Manage Team</span></td>
+<td>セッションの追跡可能性3点セット（commit→Session ID→ログ→transcript）でLLM側の作業を追跡・是正する。</td>
+<td>作業ログ記帳ツール／作業ログ監査ツール</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>作業ログ監査ツール（[A]〜[E]）＋自動フック</td>
+<td>セッション開始時</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>資源のコントロール</td>
+<td><span class="enname">Control Resources</span></td>
+<td>同じ週の占有㎡合計が作土面積を超えないか継続監視する。</td>
+<td>資源容量チェックツール</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>資源容量チェックツール [39]（同じ週の占有㎡⇔作土）</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-7"><summary>コミュニケーション・マネジメント（3 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>コミュニケーションマネジメントの計画</td>
+<td><span class="enname">Plan Communications Management</span></td>
+<td>家族向け・PM向けで発行先を分け、読者に合わせた文体・allowlistを設計する。</td>
+<td>編集方針書（family・garage・hatake-note それぞれ）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>検査</td>
+<td>公開前品質チェック [8]／整合検査ツール [44]（三点一致＝allowlist⇔SECTIONS⇔CI paths）</td>
+<td>発行時／セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>コミュニケーションのマネジメント</td>
+<td><span class="enname">Manage Communications</span></td>
+<td>パフォーマンス報告書の現況報告を（外部公開版）月次報告ページとして家族に発行する。定例のステークホルダー横断レビュー会議は開かず都度追記で足りるとしている（PMBOK対応語彙集「テーラリングの記録」節）。</td>
+<td>パフォーマンス報告書／外部公開バッチ</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>発行ゲート</td>
+<td>外部公開バッチ（（外部公開版）月次報告ページ は <code>&lt;a</code> 0本ゲート）＋（内部台帳）（（内部台帳） が push のたびに呼ぶ）</td>
+<td>発行時／コミット時（main への push）</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>コミュニケーションの監視</td>
+<td><span class="enname">Monitor Communications</span></td>
+<td>公開面の結合点（三点一致・地名の対等）を公開前品質チェックで検査し続ける。</td>
+<td>公開前品質チェック</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>フック</td>
+<td>自動フック（origin/main に届いたか）＋公開前品質チェック [8]</td>
+<td>ターン終了時（Stop フック）／発行時</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-8"><summary>リスク・マネジメント（7 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>リスクマネジメントの計画</td>
+<td><span class="enname">Plan Risk Management</span></td>
+<td>「いつも2案（A案・B案）」を同じ日に書く恒久ルールがリスク対応の設計そのもの。</td>
+<td>運用規約書「今日やることの判断基準」</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳・要確認</span></td>
+<td>人の決裁</td>
+<td>運用規約書「today-triage」（いつも2案）</td>
+<td>提案時（todo の今日欄）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>リスクの特定</td>
+<td><span class="enname">Identify Risks</span></td>
+<td>承知で取る賭けをリスク登録簿へ仮説・賭け金・判定を先に書いて登録する。</td>
+<td>リスク登録簿</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳・要確認</span></td>
+<td>正本記録</td>
+<td>リスク登録簿 進行中の試作（T-番号・仮説／賭け金／判定を先に書く）＋整合検査ツール [18]</td>
+<td>提案時（試作の登録）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>定性的リスク分析の実施</td>
+<td><span class="enname">Perform Qualitative Risk Analysis</span></td>
+<td>却下理由・再検討の条件を✕／△／🔁で記録し、次に考える制約条件にする。優先度の数値化はしない。</td>
+<td>変更ログ台帳</td>
+<td><span class="pill hold">△</span> <span class="refnote">参考訳・要確認</span></td>
+<td>人の決裁</td>
+<td>変更ログ台帳「採否」（✕／△／🔁 で記録）</td>
+<td>提案時</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>定量的リスク分析の実施</td>
+<td><span class="enname">Perform Quantitative Risk Analysis</span></td>
+<td>GDD逆算や作土39.4㎡の容量計算のように数値で検算する場面はあるが、リスク専用の定量分析手法は持たない。</td>
+<td>逆算ツール</td>
+<td><span class="pill hold">△</span> <span class="refnote">参考訳・要確認</span></td>
+<td>テーラリング</td>
+<td>PMBOK対応語彙集「テーラリングの記録」（EVM の行＝数値管理は実測較正で代替）</td>
+<td>年次（見直し）</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>リスク対応の計画</td>
+<td><span class="enname">Plan Risk Responses</span></td>
+<td>危険が続く場合は区画除外を本人に仰ぐ、装備の採否はdecisionsへ、という安全管理台帳の対応方針。</td>
+<td>安全管理台帳</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳・要確認</span></td>
+<td>人の決裁</td>
+<td>安全管理台帳「常時の注意この土地この季節」</td>
+<td>報告時（安全イベント）</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>リスク対応策の実行</td>
+<td><span class="enname">Implement Risk Responses</span></td>
+<td>承知で取ったリスク（リスク登録簿進行中の試作）を賭け金の範囲で実際に実行する。</td>
+<td>リスク登録簿（進行中の試作）</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳・要確認</span></td>
+<td>正本記録</td>
+<td>リスク登録簿（結果は追記・予想は書き換えない）</td>
+<td>実施時（試作）</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>リスクの監視</td>
+<td><span class="enname">Monitor Risks</span></td>
+<td>試作の結果を追記し、判定済みへ移す追記運用。</td>
+<td>リスク登録簿</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳・要確認</span></td>
+<td>検査</td>
+<td>整合検査ツール [24]（観察窓⇔todo⇔早見表）＋リスク登録簿 追記</td>
+<td>セッション開始時（定型ルーチン）／ログ記録時（品質チェックリスト（自動検査））</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-9"><summary>調達マネジメント（3 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>計画</td>
+<td>調達マネジメントの計画</td>
+<td><span class="enname">Plan Procurement Management</span></td>
+<td>「買う・採る・敷く・撒く」の前に必ずフロー→ストック→採取→不足分手配の順で検討する。</td>
+<td>前提条件ログ §0.5</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>人の決裁</td>
+<td>前提条件ログ「1-手元資源--フロー継続的に出るもの」（買う前に①フロー②ストック③採取④手配）</td>
+<td>提案時（手配）</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>調達の実行</td>
+<td><span class="enname">Conduct Procurements</span></td>
+<td>調達計画の締切に沿って実際に購入し、記帳する。二次情報では「調達のマネジメント」と呼ぶ資料もあり表記ゆれが残る（要確認）。</td>
+<td>調達計画／台帳更新ツール bought</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳・要確認</span></td>
+<td>正本記録</td>
+<td>台帳更新ツール bought（expenses 明細＋procurement ☑・自動フック がガード）</td>
+<td>購入時</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>調達のコントロール</td>
+<td><span class="enname">Control Procurements</span></td>
+<td>購入後に早見表の施肥列へ行き先を反映し、procurementのチェックを済にする「買ったら5点セット」運用。</td>
+<td>調達計画書（表示用）「買ったら5点セット」</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>生成器</td>
+<td>生成ツール [26]（🛒 表）＋コスト集計ツール --update</td>
+<td>購入時／発行時（生成物レジストリ check-public）</td>
+</tr>
+</tbody></table></div></details><details class="kacard" id="ka-10"><summary>ステークホルダー・マネジメント（4 プロセス）</summary><div class="tw"><table class="dtable proc">
+<thead><tr>
+<th>プロセス群</th>
+<th>プロセス名</th>
+<th>原文名</th>
+<th>このプロジェクトの実体</th>
+<th>対応する正本・ツール</th>
+<th>状態</th>
+<th>保証方式</th>
+<th>保証手段</th>
+<th>起動条件</th>
+</tr></thead><tbody>
+<tr>
+<td>立上げ</td>
+<td>ステークホルダーの特定</td>
+<td><span class="enname">Identify Stakeholders</span></td>
+<td>読者（家族）が固定で増減しないため、正式な登録簿・特定プロセスは持たない（PMBOK対応語彙集「テーラリングの記録」節＝ステークホルダー登録簿の行と同じ理由）。</td>
+<td>—</td>
+<td><span class="pill no">✕</span> <span class="refnote">参考訳</span></td>
+<td>テーラリング</td>
+<td>代替統制＝家族用ダッシュボードの読者は固定（PMBOK対応語彙集「テーラリングの記録」・ステークホルダー登録簿の行）</td>
+<td>再点検条件＝読者が家族の外へ増えたら／PM向け入口の読者像が変わったら</td>
+</tr>
+<tr>
+<td>計画</td>
+<td>ステークホルダー・エンゲージメントの計画</td>
+<td><span class="enname">Plan Stakeholder Engagement</span></td>
+<td>家族用ダッシュボードという専用の公開面を用意し、何を見せるか（allowlist/denylist）を設計する。</td>
+<td>公開前無害チェック</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>発行ゲート</td>
+<td>公開前無害チェック（PUBLIC_ALLOWLIST／denylist）＋公開前品質チェック [8]</td>
+<td>発行時</td>
+</tr>
+<tr>
+<td>実行</td>
+<td>ステークホルダー・エンゲージメントのマネジメント</td>
+<td><span class="enname">Manage Stakeholder Engagement</span></td>
+<td>TODO・手配・カレンダーを更新するたび家族用ダッシュボードを発行し直す運用。</td>
+<td>外部公開バッチ</td>
+<td><span class="pill ok">◎</span> <span class="refnote">参考訳</span></td>
+<td>発行ゲート</td>
+<td>外部公開バッチ＋（内部台帳）（（内部台帳） が push のたびに発行）</td>
+<td>発行時／コミット時（main への push）</td>
+</tr>
+<tr>
+<td>監視・コントロール</td>
+<td>ステークホルダー・エンゲージメントの監視</td>
+<td><span class="enname">Monitor Stakeholder Engagement</span></td>
+<td>意思決定者が本人1人で会議体を持たないため、エンゲージメントの定量監視は行わない（PMBOK対応語彙集「テーラリングの記録」節＝ステークホルダー横断の報告会議と同じ理由）。</td>
+<td>—</td>
+<td><span class="pill no">✕</span> <span class="refnote">参考訳</span></td>
+<td>テーラリング</td>
+<td>代替統制＝本人が家族用ダッシュボードを毎日見る（todo の 🗂 事務所節が判断待ちを集約）</td>
+<td>再点検条件＝意思決定者が増えたら／会議体を持つことになったら</td>
+</tr>
+</tbody></table></div></details>
+    </section>
+
+    <section id="itto">
+      <h2>ITTO 展開カード（代表4プロセス）</h2>
+      <p class="lede">教科書のITTO（インプット→ツールと技法→アウトプット）を全列挙せず、
+      この畑で実際に回っている代表プロセスだけを実物で展開する。</p>
+      <div class="grid2 itto-grid"><div class="panel itto-card"><h3 style="margin-top:0">スケジュールの作成</h3><div class="itto-row"><span class="itto-k">IN</span><span>標準工程マスタ（標準工程マスタ）・気象実測（気象実測台帳）</span></div><div class="itto-row"><span class="itto-k">TOOLS</span><span>積算温度モデルの逆算（逆算ツール）</span></div><div class="itto-row"><span class="itto-k">OUT</span><span>作業オーダー台帳の週（作業オーダー台帳 の週列）</span></div></div><div class="panel itto-card"><h3 style="margin-top:0">リスクの特定</h3><div class="itto-row"><span class="itto-k">IN</span><span>品目採用の決裁（変更ログ台帳）・栽培の失敗履歴（教訓登録簿）</span></div><div class="itto-row"><span class="itto-k">TOOLS</span><span>承知で取る賭けを仮説・賭け金・判定として先に言語化する（T-番号立て）</span></div><div class="itto-row"><span class="itto-k">OUT</span><span>リスク登録簿の新規行（リスク登録簿 進行中の試作）</span></div></div><div class="panel itto-card"><h3 style="margin-top:0">統合変更管理</h3><div class="itto-row"><span class="itto-k">IN</span><span>品目・数量・畝の変更提案（庭の計画変更ワークフロー起点）</span></div><div class="itto-row"><span class="itto-k">TOOLS</span><span>一次情報確認→正本を上流から下流へ直す手順（plan-2027→bed-plan→…）</span></div><div class="itto-row"><span class="itto-k">OUT</span><span>採否の記録（変更ログ台帳への1行・✕／△／🔁）</span></div></div><div class="panel itto-card"><h3 style="margin-top:0">プロジェクト知識のマネジメント（教訓の特定）</h3><div class="itto-row"><span class="itto-k">IN</span><span>気温・日照・降水の実測（気象実測台帳）と収穫結果（収穫実績台帳）の突き合わせ</span></div><div class="itto-row"><span class="itto-k">TOOLS</span><span>GDD較正・要因分析（逆算ツール gdd）</span></div><div class="itto-row"><span class="itto-k">OUT</span><span>教訓登録簿への4点セット追記（教訓登録簿）</span></div></div></div>
+    </section>
+
+    <section id="documents">
+      <h2>ドキュメント体系（PMBOK第6版 知識エリア）</h2>
+      <p class="lede">工程管理・品質管理・リスク管理の文書の型は、PMBOK第6版までの知識エリア側が持つ。
+      このプロジェクトの正本文書をその型で棚卸しする（知識エリア単位の代表文書と、プロジェクトマネジメント計画書の
+      構成要素＝WBS・各ベースライン・調達マネジメント計画書を含む。33のプロジェクト文書の全量は次節）。</p>
+      <div class="tw"><table class="dtable ">
+<thead><tr>
+<th>知識エリア</th>
+<th>その体系の文書</th>
+<th>この畑での対応文書</th>
+</tr></thead><tbody>
+<tr>
+<td>統合マネジメント</td>
+<td>前提条件ログ／変更ログ／課題ログ／教訓登録簿</td>
+<td>前提条件ログ（判断の前提）／変更ログ台帳（採否と理由）／課題管理システム（課題ログ）（課題）／教訓登録簿（失敗と来年の GO 条件）</td>
+</tr>
+<tr>
+<td>スコープ・マネジメント</td>
+<td>プロジェクト・スコープ記述書／WBS</td>
+<td>年次スコープ計画書／四半期実行計画（面積・株数）</td>
+</tr>
+<tr>
+<td>スケジュール・マネジメント</td>
+<td>スケジュール・ベースライン／マイルストーン・リスト</td>
+<td>標準工程マスタ（標準値）／スケジュール・ベースライン（窓）／作業オーダー台帳（作付け台帳）</td>
+</tr>
+<tr>
+<td>コスト・マネジメント</td>
+<td>コスト見積り／コスト・ベースライン／実績</td>
+<td>調達計画（量・用途から見積る）／コスト実績台帳（非公開）（非公開）</td>
+</tr>
+<tr>
+<td>品質マネジメント</td>
+<td>品質尺度／品質チェックリスト</td>
+<td>発行ゲートの検査一式／正本どうしの突き合わせ検査</td>
+</tr>
+<tr>
+<td>資源マネジメント</td>
+<td>資源カレンダー／資源ヒストグラム</td>
+<td>資源カレンダー「整備の窓」／資源ヒストグラム＝畝の山積み</td>
+</tr>
+<tr>
+<td>コミュニケーション・マネジメント</td>
+<td>プロジェクト伝達事項／作業パフォーマンス報告書</td>
+<td>パフォーマンス報告書 → （外部公開版）月次報告ページ</td>
+</tr>
+<tr>
+<td>リスク・マネジメント</td>
+<td>リスク登録簿</td>
+<td>リスク登録簿（承知で取った賭け）／安全管理台帳（作業者の安全）</td>
+</tr>
+<tr>
+<td>調達マネジメント</td>
+<td>調達マネジメント計画書／発注・納期</td>
+<td>調達計画（締切＝マイルストーン）</td>
+</tr>
+<tr>
+<td>ステークホルダー・マネジメント</td>
+<td>ステークホルダー登録簿</td>
+<td>対象は家族＝固定。登録簿は持たない（テーラリングで削る）</td>
+</tr>
+</tbody></table></div>
+    </section>
+
+    <section id="documents33">
+      <h2>33のプロジェクト文書 棚卸し</h2>
+      <p class="lede">上の表は知識エリア単位の代表と計画書の構成要素。こちらが第6版33文書の全量＝実体（◎）と
+      テーラリングで削った理由（✕）を1文書1行で列挙する（33件全て記載・未確認0件）。</p>
+      <div class="tw"><table class="dtable ">
+<thead><tr>
+<th>文書名</th>
+<th>この畑の対応</th>
+<th>状態</th>
+</tr></thead><tbody>
+<tr>
+<td>アクティビティ属性</td>
+<td>作業オーダー台帳 の1行（品種・畝・占有㎡・週の各列）がアクティビティの属性を持つ</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>アクティビティ・リスト</td>
+<td>作業オーダー台帳（作付けオーダー一覧そのもの）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>前提条件ログ</td>
+<td>前提条件ログ（判断の前提を1枚に集約）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>見積りの根拠</td>
+<td>標準工程マスタ（週モデル）・積算温度モデル定数表（GDD較正定数）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>変更ログ</td>
+<td>変更ログ台帳（採否と理由）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>コスト見積り</td>
+<td>調達計画（量・用途から見積る）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>コスト予測</td>
+<td>予算枠を事前に持たず都度判断のため作成しない（テーラリングで削除。「予算の設定」プロセス△と同じ理由）</td>
+<td><span class="pill no">✕</span></td>
+</tr>
+<tr>
+<td>所要期間見積り</td>
+<td>逆算ツール（GDD逆算）・標準工程マスタ（週モデル）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>課題ログ</td>
+<td>課題管理システム（課題ログ）（課題管理システム）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>教訓登録簿</td>
+<td>教訓登録簿（失敗と来年のGO条件・4点セット）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>マイルストーン・リスト</td>
+<td>調達計画 の締切列／スケジュール・ベースライン の窓</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>物的資源の割当て</td>
+<td>作業オーダー台帳 の畝・占有㎡列（台帳更新ツール assign/occupy）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>プロジェクト・カレンダー</td>
+<td>（内部台帳）（月別統合ビュー）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>プロジェクト伝達事項</td>
+<td>パフォーマンス報告書 → （外部公開版）月次報告ページ（家族への現況報告）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>プロジェクト・スケジュール</td>
+<td>資源ヒストグラム（工程表）（品目ビュー・畝ビューのガントSVG）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>プロジェクト・スケジュール・ネットワーク図</td>
+<td>前後関係は 輪作年限資料 の輪作順序で表すのみ。PERT/CPM形式の図は作らない（テーラリングで削除）</td>
+<td><span class="pill no">✕</span></td>
+</tr>
+<tr>
+<td>プロジェクト・スコープ記述書</td>
+<td>年次スコープ計画書／四半期実行計画</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>プロジェクト・チームの任命</td>
+<td>運用規約書「ユーザープロフィール」（本人＋LLMの分担。人数固定のため正式な任命書式は持たない）</td>
+<td><span class="pill hold">△</span></td>
+</tr>
+<tr>
+<td>品質コントロール測定結果</td>
+<td>品質チェックリスト（自動検査） の検査実行ログ</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>品質尺度</td>
+<td>各発行ゲート検査の判定基準（例＝DEAD_REF_MAX）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>品質報告書</td>
+<td>品質チェックリスト（自動検査） --quiet の出力（指摘一覧）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>要求事項文書</td>
+<td>需給モデル台帳（栄養価・必要量の需給モデル）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>要求事項トレーサビリティマトリックス</td>
+<td>個別要求から成果物までの正式な追跡表は持たない。採用理由は 変更ログ台帳 に1行残すのみ（テーラリングで削除）</td>
+<td><span class="pill no">✕</span></td>
+</tr>
+<tr>
+<td>資源ブレークダウンストラクチャー</td>
+<td>資源カレンダー（畝別の資源一覧が代替）</td>
+<td><span class="pill hold">△</span></td>
+</tr>
+<tr>
+<td>資源カレンダー</td>
+<td>資源カレンダー「整備の窓」列</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>資源要求事項</td>
+<td>作業オーダー台帳 の占有㎡列（ 決裁）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>リスク登録簿</td>
+<td>リスク登録簿（進行中の試作＝承知で取った賭け）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>リスク報告書</td>
+<td>個別の報告書は作らず リスク登録簿 への追記で代替（テーラリングで削除）</td>
+<td><span class="pill no">✕</span></td>
+</tr>
+<tr>
+<td>スケジュール・データ</td>
+<td>気象実測台帳（気象実測台帳）・作業オーダー台帳 の週／日列</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>スケジュール予測</td>
+<td>逆算ツール project／limit（GDD逆算による予測）</td>
+<td><span class="pill ok">◎</span></td>
+</tr>
+<tr>
+<td>ステークホルダー登録簿</td>
+<td>対象は家族＝固定で増減しないため登録簿は持たない（「テーラリングの記録」節・既存行と同じ理由）</td>
+<td><span class="pill no">✕</span></td>
+</tr>
+<tr>
+<td>チーム憲章</td>
+<td>正式な憲章文書は持たない。運用規約書冒頭の役割分担がその実体を兼ねる</td>
+<td><span class="pill hold">△</span></td>
+</tr>
+<tr>
+<td>テスト・評価文書</td>
+<td>品質チェックリスト（自動検査）・各検査スクリプトの判定基準（「品質尺度」と同じ実体を指すポインタ）</td>
+<td><span class="pill hold">△</span></td>
+</tr>
+</tbody></table></div>
+    </section>
+
+    </div>
+    <footer>hatake-note ― 検索避け設定あり（noindex）。全ての数値は非公開の一次データから自動生成。</footer>
+  </div>
+</div>
+<script data-hatake-toc="1">
+(function(){
+  var toc = document.querySelector('.sidebar nav.toc');
+  if(!toc || !('IntersectionObserver' in window)) return;
+  var links = {};
+  Array.prototype.forEach.call(toc.querySelectorAll('a[href^="#"]'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.wrap > section[id]'))
+    .filter(function(s){ return links[s.id]; });
+  if(!sections.length) return;
+  /* 〔#141〕ネストTOC の子（a.sub＝pmbok6 の知識エリア #ka-N・pmbok7 の 8領域）も監視する＝
+     親の節に加えて、その中で最後に見えている子を .active にする（親と子の2段で現在位置を出す） */
+  var subs = Array.prototype.slice.call(toc.querySelectorAll('a.sub[href^="#"]'))
+    .map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); })
+    .filter(function(el){ return el; });
+  var visible = Object.create(null);
+  function apply(){
+    var activeId = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (visible[sections[i].id]) activeId = sections[i].id;
+    }
+    var activeSub = null;
+    if (activeId) {
+      var sec = document.getElementById(activeId);
+      for (var j = 0; j < subs.length; j++) {
+        if (visible[subs[j].id] && sec.contains(subs[j])) activeSub = subs[j].id;
+      }
+    }
+    for (var id in links) links[id].classList.toggle('active', id === activeId || id === activeSub);
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){ visible[entry.target.id] = entry.isIntersecting; });
+    apply();
+  }, { rootMargin: '0px 0px -70% 0px', threshold: 0 });
+  sections.forEach(function(s){ io.observe(s); });
+  subs.forEach(function(s){ io.observe(s); });
+})();
+/* 〔#141〕drawer（スマホのメニュー）・fragment で来た details と親を開く・sticky ヘッダの高さを --hdr へ */
+(function(){
+  var b = document.querySelector('.menu-btn'), sb = document.getElementById('site-menu');
+  /* ★モーダルの a11y〔#141 Codex 要修正4〕: 開いたら aside を role=dialog/aria-modal にして✕へ focus・
+     .main を inert・Tab を aside 内で巡回・閉じたら属性を戻しメニューボタンへ focus（リンク遷移は除く）・
+     広い画面へ resize したら閉じる（デスクトップでは aside は常設ナビ＝dialog 属性を残さない） */
+  var mainEl = document.querySelector('.app > .main');
+  var FOC = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  var mq = window.matchMedia('(min-width: 821px)');
+  function isOpen(){ return document.body.classList.contains('menu-open'); }
+  /* ★閉じた drawer（モバイル）は inert＝Tab 順・支援技術から外す〔#141 Codex 再レビュー 要修正2〕。
+     開いたら外す・デスクトップ幅（常設ナビ）でも外す。CSS の visibility:hidden と二重（JS 無しでも隠れる） */
+  function syncInert(){
+    if (!sb) return;
+    if (!mq.matches && !isOpen()) sb.setAttribute('inert', ''); else sb.removeAttribute('inert');
+  }
+  function setMenu(o, ret){
+    if(!b) return;
+    document.body.classList.toggle('menu-open', o); b.setAttribute('aria-expanded', o ? 'true' : 'false');
+    if (mainEl) { if (o) mainEl.setAttribute('inert', ''); else mainEl.removeAttribute('inert'); }
+    syncInert();
+    if (sb) {
+      if (o) { sb.setAttribute('role', 'dialog'); sb.setAttribute('aria-modal', 'true'); sb.setAttribute('aria-label', 'メニュー');
+               var c = sb.querySelector('.drawer-close') || sb.querySelector(FOC); if (c) c.focus(); }
+      else { sb.removeAttribute('role'); sb.removeAttribute('aria-modal'); sb.removeAttribute('aria-label');
+             if (ret !== false) b.focus({ preventScroll: true }); }
+    }
+  }
+  syncInert();
+  if (b && sb) {
+    b.addEventListener('click', function(){ setMenu(!isOpen()); });
+    document.addEventListener('click', function(e){
+      if (!isOpen()) return;
+      if (sb.contains(e.target) && e.target.closest('a')) setMenu(false, false);
+      else if (e.target.closest('[data-menu-close]')) setMenu(false);
+    });
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { setMenu(false); return; }
+      if (e.key !== 'Tab') return;
+      var f = [].slice.call(sb.querySelectorAll(FOC)).filter(function(x){ return x.offsetParent !== null; });
+      if (!f.length) return;
+      var a = document.activeElement;
+      if (e.shiftKey && (a === f[0] || !sb.contains(a))) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (a === f[f.length - 1] || !sb.contains(a))) { e.preventDefault(); f[0].focus(); }
+    });
+    function onmq(){ if (mq.matches && isOpen()) setMenu(false, false); syncInert(); }
+    if (mq.addEventListener) mq.addEventListener('change', onmq); else if (mq.addListener) mq.addListener(onmq);
+  }
+  function openTo(hash){
+    if (!hash || hash.length < 2) return;
+    var el = document.getElementById(hash.slice(1)); if (!el) return;
+    var n = el; while (n) { if (n.tagName === 'DETAILS') n.open = true; n = n.parentElement; }
+    el.scrollIntoView({ block: 'start' });
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]'); if (!a) return;
+    var h = a.getAttribute('href'); if (!document.getElementById(h.slice(1))) return;
+    e.preventDefault(); if (history.replaceState) history.replaceState(null, '', h); openTo(h);
+  });
+  window.addEventListener('hashchange', function(){ openTo(location.hash); });
+  var hd = document.querySelector('.topbar');
+  function hdr(){ if (hd) document.documentElement.style.setProperty('--hdr', hd.offsetHeight + 'px'); }
+  window.addEventListener('resize', hdr); hdr();
+  if (location.hash) openTo(location.hash);
+})();
+</script>
+</body>
+</html>
