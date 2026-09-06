@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>hatake-note ― 家庭菜園プロジェクト</title>
+
+<style>
+:root{--bg:#f4f6f9;--panel:#ffffff;--ink:#1b2733;--sub:#5a6b7d;--line:#e2e7ee;
+--accent:#0b5fff;--accent-ink:#ffffff;--navy:#111d33;--navy-ink:#c9d6ea;
+--ok:#0b8a3d;--ok-bg:#e6f6ec;--no:#b3261e;--no-bg:#fbe9e7;--hold:#8a5a00;--hold-bg:#fdf1da;
+--s-plan:#2a78d6;--s-actual:#eb6834;}
+@media (prefers-color-scheme: dark){:root{--bg:#0f1520;--panel:#161d2b;--ink:#e7edf6;--sub:#98a6ba;
+--line:#263041;--navy:#0a0f1a;--navy-ink:#c9d6ea;--ok:#5fd68b;--ok-bg:#123321;--no:#ff8a80;--no-bg:#3a1613;
+--hold:#f0c674;--hold-bg:#3a2c0c;--s-plan:#3987e5;--s-actual:#d95926;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Kaku Gothic ProN",
+"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.7}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex:0 0 220px;background:var(--navy);color:var(--navy-ink);padding:20px 14px;
+position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto}
+.brand{font-weight:700;font-size:17px;color:#fff;margin-bottom:4px}
+.brand-sub{font-size:11px;color:#8fa2c2;margin-bottom:18px}
+.pagetabs{display:flex;flex-direction:column;gap:2px;margin-bottom:18px;padding-bottom:16px;
+border-bottom:1px solid rgba(255,255,255,.12)}
+.pagetabs a{color:var(--navy-ink);text-decoration:none;font-size:13px;font-weight:600;padding:8px 10px;
+border-radius:6px}
+.pagetabs a:hover{background:rgba(255,255,255,.08);color:#fff}
+.pagetabs a.active{background:var(--accent);color:#fff}
+.sidebar .navhead{font-size:10.5px;letter-spacing:.06em;color:#8fa2c2;margin:0 0 4px 10px;text-transform:uppercase}
+.sidebar nav{display:flex;flex-direction:column;gap:2px}
+.sidebar nav.toc a.sub{font-size:12px;padding:5px 10px 5px 22px;color:#a9b8d0}
+.sidebar a{color:var(--navy-ink);text-decoration:none;font-size:13px;padding:8px 10px;border-radius:6px}
+.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar nav.toc a{border-left:3px solid transparent}
+.sidebar nav.toc a.active{background:rgba(11,95,255,.28);color:#fff;font-weight:700;
+border-left-color:var(--accent)}
+.sidebar nav.xlink{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.sidebar nav.xlink a{font-size:12px;color:#8fa2c2}
+.main{flex:1;min-width:0;padding:0 0 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;
+background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+.breadcrumb{font-size:13px;color:var(--sub)}
+.badge{font-size:11px;background:var(--accent);color:var(--accent-ink);padding:4px 10px;border-radius:999px;font-weight:600}
+.wrap{padding:22px 28px}
+.kpirow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:8px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .label{font-size:11px;color:var(--sub);margin-bottom:6px}
+.kpi .value{font-size:26px;font-weight:700;color:var(--accent)}
+.kpi .meta{font-size:11px;color:var(--sub);margin-top:4px}
+section{margin:34px 0}
+h2{font-size:18px;border-left:4px solid var(--accent);padding-left:10px;margin:0 0 6px}
+h3{font-size:14px}
+.lede{color:var(--sub);font-size:13px;margin:0 0 14px}
+.domaincard .general{color:var(--sub);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:0 0 10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.tw{overflow-x:auto}
+table.dtable{width:100%;border-collapse:collapse;font-size:13px}
+table.dtable th{text-align:left;color:var(--sub);font-weight:600;font-size:11px;text-transform:uppercase;
+letter-spacing:.03em;border-bottom:1px solid var(--line);padding:8px 10px;white-space:nowrap}
+table.dtable td{border-bottom:1px solid var(--line);padding:9px 10px;vertical-align:top}
+table.dtable tr:last-child td{border-bottom:none}
+table.dtable.matrix td:first-child{white-space:nowrap;font-weight:600}
+table.dtable.matrix th{white-space:normal}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.no{background:var(--no-bg);color:var(--no)}
+.pill.hold{background:var(--hold-bg);color:var(--hold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* ── モバイル〔#141〕: サイドバーは drawer（off-canvas）へ。トップバーが「ページ名＋メニューボタン」になる。
+   横一列に並べたナビもTOCも置かない（横スクロールするナビを作らない）。 */
+.menu-btn{display:none;appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+font:inherit;font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;min-height:38px;
+flex:0 0 auto}
+.menu-btn[aria-expanded="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.drawer-backdrop{display:none;position:fixed;inset:0;background:#0008;z-index:8}
+.sidebar .drawer-close{display:none}
+.wrap [id]{scroll-margin-top:calc(var(--hdr,64px) + 8px)}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}
+.app{flex-direction:column}
+.menu-btn{display:inline-block}
+/* ★閉じた drawer は Tab 順からも外す〔#141 Codex 再レビュー 要修正2〕＝translateX だけだと画面外の✕・リンクへ
+   初期 Tab が入る。visibility:hidden（CSS だけで効く・transform の遷移が終わってから隠す）＋JS が inert を付ける */
+.sidebar{position:fixed;top:0;left:0;bottom:0;height:100vh;width:min(86vw,320px);flex:none;z-index:9;
+transform:translateX(-102%);visibility:hidden;transition:transform .18s ease-out,visibility 0s linear .18s;box-shadow:2px 0 12px #0006}
+body.menu-open .sidebar{transform:none;visibility:visible;transition:transform .18s ease-out,visibility 0s}
+body.menu-open .drawer-backdrop{display:block}
+body.menu-open{overflow:hidden}
+.sidebar .drawer-close{display:inline-block;appearance:none;border:1px solid rgba(255,255,255,.35);
+background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:12px;font-weight:700;padding:5px 10px;
+border-radius:999px;cursor:pointer;float:right;margin:-2px 0 0}
+.topbar{padding:10px 14px;gap:8px}
+.topbar .breadcrumb{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink)}
+.topbar .badge{display:none}
+.wrap{padding:16px 14px}}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px}
+.tag b{color:var(--accent)}
+.domaincard{margin-bottom:12px;padding:0}
+.domaincard>summary{cursor:pointer;padding:14px 20px}
+.domaincard>summary h3{display:inline;margin:0;font-size:15px}
+.domaincard>.body{padding:0 20px 18px}
+.domaincard h3{margin:0 0 4px;font-size:15px}
+details.flush{border-top:1px solid var(--line)}
+details.flush>summary{cursor:pointer;font-weight:600;padding:9px 4px;font-size:13px}
+details.flush>.body{padding:4px 4px 12px;font-size:13px}
+.months{border-bottom:1px solid var(--line);margin-top:6px}
+p.more{margin:6px 0 18px;font-size:13px}
+.sidebar nav.pagetabs.more a{font-size:12.5px}
+.figure{overflow-x:auto;max-height:520px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;
+background:#fdfdfb}
+.figure svg{display:block;min-width:520px}
+.chartfig{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+padding:14px 16px 6px}
+.chartfig svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto}
+.chart-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:2px}
+.chart-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;
+vertical-align:middle}
+.chart-caption{font-size:11px;color:var(--sub);margin:6px 0 4px}
+.domaincard a{color:var(--accent)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.tile{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+text-decoration:none;color:var(--ink)}
+.tile b{display:block;color:var(--accent);font-size:15px;margin-bottom:6px}
+.tile span{font-size:12px;color:var(--sub)}
+.mcell{text-align:center}
+.mcell-n{font-size:11px;color:var(--sub)}
+.mcell-badges{display:flex;gap:3px;justify-content:center;margin-top:2px;flex-wrap:wrap}
+.mempty{color:var(--sub)}
+.enname{color:var(--sub);font-size:11px;font-style:italic}
+.refnote{color:var(--sub);font-size:10px}
+.itto-grid{grid-template-columns:1fr 1fr}
+@media (max-width:820px){.itto-grid{grid-template-columns:1fr}}
+.itto-card h3{color:var(--accent)}
+.itto-row{display:flex;gap:8px;font-size:13px;padding:4px 0;border-top:1px dashed var(--line)}
+.itto-row:first-of-type{border-top:none}
+.itto-k{flex:0 0 56px;font-size:10px;font-weight:700;color:var(--sub);padding-top:2px}
+.kacard{margin-bottom:20px}
+.kacard summary{cursor:pointer;font-weight:600;padding:10px 4px}
+.appendix-body p{margin:0 0 10px}
+.appendix-body ol,.appendix-body ul{margin:0 0 10px;padding-left:1.4em}
+.appendix-body li{margin:0 0 8px}
+.appendix-body p:last-child{margin-bottom:0}
+.appendix-body .tw{margin:0 0 10px}
+.appendix-body table.dtable{min-width:600px}
+.appendix-body table.dtable td:first-child,.appendix-body table.dtable td:nth-child(2){white-space:nowrap}
+pre{background:var(--navy);color:var(--navy-ink);border-radius:8px;padding:14px 16px;
+overflow-x:auto;font-size:12px;line-height:1.6;margin:0 0 10px}
+pre code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+footer{padding:24px 28px;color:var(--sub);font-size:12px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="drawer-backdrop" data-menu-close="1"></div>
+  <aside class="sidebar" id="site-menu">
+    <button type="button" class="drawer-close" data-menu-close="1" aria-label="メニューを閉じる">✕ 閉じる</button>
+    <div class="brand">🌱 hatake-note</div>
+    <div class="brand-sub">家庭菜園プロジェクト・ダッシュボード</div>
+    <div class="navhead">ページ</div>
+    <nav class="pagetabs" aria-label="ページ"><a href="./index.html" class="active" aria-current="page">概要ダッシュボード</a><a href="./pmbok7.html">PMBOK 第7版</a><a href="./pmbok6.html">PMBOK 第6版</a><a href="./agile.html">アジャイル生産管理</a><a href="./registers.html">運用記録</a></nav>
+    <div class="navhead">その他</div>
+    <nav class="pagetabs more" aria-label="その他"><a href="./appendix.html">再現ガイド（巻末付録）</a></nav>
+    <nav class="xlink"><a href="https://gonin.pages.dev/hatake/kanri/" target="_blank" rel="noopener noreferrer">🌱 家族用ダッシュボード ↗</a></nav>
+    <div class="navhead">このページ</div>
+    <nav class="toc" aria-label="このページ"><a href="#overview">概要</a><a href="#kpi">KPI サマリー</a><a href="#recent">直近の判断・教訓・リスク</a><a href="#lifecycle">適応型 / 予測型</a><a href="#explore">詳細ページ</a></nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="site-menu">☰ メニュー</button>
+      <div class="breadcrumb">hatake-note / 家庭菜園プロジェクト</div>
+      <div class="badge">PMBOK 第6版・第7版 準拠</div>
+    </header>
+    <div class="wrap">
+
+    <section id="overview">
+      <h2>概要</h2>
+      <p class="lede">家庭菜園は、作者にとって新規性の高いプロジェクトである。だから
+      PMBOK（Project Management Body of Knowledge）第6版・第7版の語彙と道具立てで実際に管理を試み、
+      年次のスコープ計画・週次のKPI較正・変更ログ・教訓登録簿・リスク登録簿・発行前の自動品質ゲートと
+      いった実物をここに載せている。このページは要約だけを持つ。全量の台帳は「運用記録」、教科書の網羅は
+      「PMBOK 第7版」「PMBOK 第6版」の各ページにある。</p>
+    </section>
+
+    <section id="kpi">
+      <h2>KPI サマリー</h2>
+      <p class="lede">直近12ヶ月の目標達成率（栄養素ベース）と、長期ポートフォリオ（品目・品種）の拡張率。
+      実測に基づき自動更新される。</p>
+      <div class="kpirow"><div class="kpi"><div class="label">かさ（重さ）</div><div class="value"><strong>35%</strong></div><div class="meta">目標 12.2 kg ・ 実績 4.2 kg</div></div><div class="kpi"><div class="label">ビタミンA（カロテン）</div><div class="value"><strong>28%</strong></div><div class="meta">目標 170 mg ・ 実績 47 mg</div></div><div class="kpi"><div class="label">ビタミンC</div><div class="value"><strong>28%</strong></div><div class="meta">目標 3,290 mg ・ 実績 915 mg</div></div><div class="kpi"><div class="label">葉酸</div><div class="value"><strong>29%</strong></div><div class="meta">目標 9.1 mg ・ 実績 2.6 mg</div></div><div class="kpi"><div class="label">食物繊維</div><div class="value"><strong>40%</strong></div><div class="meta">目標 247 g ・ 実績 98 g</div></div><div class="kpi"><div class="label">ビタミンK</div><div class="value"><strong>29%</strong></div><div class="meta">目標 8,312 µg ・ 実績 2,406 µg</div></div><div class="kpi"><div class="label"><strong>品目</strong>（作物の種類）（ポートフォリオ）</div><div class="value"><strong>67%</strong></div><div class="meta">現在 <strong>67</strong> ／ 目標 100</div></div><div class="kpi"><div class="label"><strong>品種</strong>（同じ作物の中身）（ポートフォリオ）</div><div class="value"><strong>25%</strong></div><div class="meta">現在 <strong>93</strong> ／ 目標 365</div></div></div>
+    </section>
+
+    <section id="recent">
+      <h2>直近の判断・教訓・リスク</h2>
+      <p class="lede">各台帳の件数と最新 3 件だけ。全量は
+      <a href="./registers.html">運用記録</a>（変更ログ 624 件・教訓 38 件・リスク 進行中 24 件／判定済み 3 件）。</p>
+      <h3>変更ログ ― 最新 3 件（全 624 件）</h3>
+      <div class="tw"><table class="dtable ">
+<thead><tr>
+<th>日付</th>
+<th>決定事項</th>
+<th>判定</th>
+<th>理由（要約）</th>
+</tr></thead><tbody>
+<tr>
+<td>2026-09-06</td>
+<td>★<strong>ソラマメを当地で秋まき（10月上旬）で通すか、春まきへ倒すか</strong></td>
+<td><span class="pill ok"><strong>✅ ①＝秋まきで通す</strong>〔本人 2026-09-06「そら豆　秋まき」〕</span></td>
+<td><strong>サカタ公式の打ち分けを承知の上で採った</strong>＝適応性は「作型は秋まき栽培から暖地のハウス・トンネル・露地での早出し栽培、高冷地や冷涼地の春まき栽培に適応性があります」で、冷涼地に名指しされているのは春まき（秋まき側に地域の限定語は無い）。</td>
+</tr>
+<tr>
+<td>2026-09-06</td>
+<td>★<strong>山菜5種（ウルイ・コゴミ・ウド・チャイブ・ギョウジャニンニク）をどこで買うか</strong></td>
+<td><span class="pill ok"><strong>✅ ①＝岩手（紫桜館）へまとめる</strong>〔本人 2026-09-06「岩手で買おう」「当地と近い」〕</span></td>
+<td><strong>単価では②が勝つのに①を採った</strong>＝ギョウジャニンニクはメデタシ 4〜5年生 ¥119/本 に対し紫桜館 特大 ¥396/株 で3倍以上。</td>
+</tr>
+<tr>
+<td>2026-09-06</td>
+<td>★<strong>ギョウジャニンニクの株齢＝特大（6〜8年）か 3〜5年か</strong></td>
+<td><span class="pill ok"><strong>✅ ①＝特大を少なく</strong>〔本人 2026-09-06「少なくていいので特大でいこう」〕</span></td>
+<td><strong>どちらの株齢も「植付後いつから穫れるか」を店が書いていない＝不明</strong>で、その不明を年数で埋める側に倒した（3〜5年は下限3年＝翌々年になりうる）。</td>
+</tr>
+</tbody></table></div>
+      <p class="more"><a href="./registers.html#changelog">変更ログの全量 →</a></p>
+      <h3>教訓登録簿 ― 最新 3 件（全 38 件）</h3>
+      <div class="tw"><table class="dtable ">
+<thead><tr>
+<th>分類</th>
+<th>事象・発見</th>
+<th>原因・記録先</th>
+</tr></thead><tbody>
+<tr>
+<td>栽培の失敗</td>
+<td><strong>ホウレンソウのポット試作が未発芽</strong>（L142・08-07 播種・玄関ポーチ）</td>
+<td><strong>発芽適温の外</strong>（播種当日・翌日の日最高 27.6・26.2℃／25℃以上で発芽不良）。⚠️当時は「品目の発芽性（硬実）」と誤って帰属した</td>
+</tr>
+<tr>
+<td>構造的な発見</td>
+<td><strong>本命の弱点を補う作物を同じ日に播く＝定植時にリアルオプションを持つ</strong>。価値は差し替えではなく「本命を早く諦められること」（25℃近辺が7日見えたらレタスを切る）＝切るほど畝と時間が平準化へ回る</td>
+<td>本書「育苗｜本命の弱点を補う…」／seasonal 7月・plan-2027 (C)・context §5</td>
+</tr>
+<tr>
+<td>手順・記録の穴</td>
+<td><strong>資材を「全畝へ一律」で施用し、畝ごとの判定と決裁を踏み越えた</strong>＝08-24 の苦土石灰（14面・各50〜70g）は、pH実測で ⚪不要と出ていた6面と、見送りを決裁済みの2面（南東5・6）にも入った。台帳は実施で更新済み＝土から抜けない</td>
+<td><strong>畝別の資材は「一律◯g」で起票しない</strong>＝施用の行は畝ごとに立て、⚪／見送りの畝は行そのものを作らない。⚠️入れる前に採否と早見表の施肥列を1回引く（決裁は畝単位で出ている）</td>
+</tr>
+</tbody></table></div>
+      <p class="more"><a href="./registers.html#lessons">教訓登録簿の全量 →</a></p>
+      <h3>リスク登録簿 ― 進行中の最新 3 件（進行中 24 件・判定済み 3 件）</h3>
+      <div class="tagrow"><div class="tag"><b>T-290</b> タマネギの育苗を「露地床のスジまき」と「51型トレー」で並べる　― 同じ品種・同じ日にまいて、当地でどちらが良い苗になるか</div><div class="tag"><b>T-414</b> ホウレンソウ「じっくり朝霧」　― 西6 の寒締め区に入れて、寒締めの後端が2月上旬より後ろへ動くか</div><div class="tag"><b>T-145</b> タマネギ「キーパー８０８」　― 同じ場所に吊るして、ラッキーより後まで持つか</div></div>
+      <p class="more"><a href="./registers.html#risk">リスク登録簿の全量 →</a></p>
+    </section>
+
+    <section id="lifecycle">
+      <h2>適応型 / 予測型 ― ハイブリッド・ライフサイクル</h2>
+      <div class="grid2">
+        <div class="panel">
+          <h3 style="margin-top:0">予測型（Predictive）</h3>
+          <p>年間の作付け計画（スコープ・面積・輪作枠）は事前に確定し、標準工程マスタから
+          スケジュール・ベースラインを逆算する。畝という有限資源の配分は、年次計画の時点で
+          衝突（同一資源への同時要求）を検出し、上位で裁定する。</p>
+        </div>
+        <div class="panel">
+          <h3 style="margin-top:0">適応型（Adaptive）</h3>
+          <p>個々の作業実行日は、気象実測とGO/WAIT条件による都度判断に委ねる。
+          締切は点、実行可能な適期は幅として持ち、単線の予測で計画を固定しない
+          （つねに条件分岐＝A案・B案を用意する）。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="explore">
+      <h2>詳細ページ</h2>
+      <p class="lede">本サイトは3つのレンズで既存資料を再配置する（ライフサイクル分類・知識エリア分類・
+      ドキュメント体系）。教科書の網羅は2つの版に、台帳の全量は運用記録に分けて置いてある。</p>
+      <div class="tiles">
+        <a class="tile" href="./pmbok7.html"><b>PMBOK 第7版 ―&gt;</b><span>価値実現システム・8つのパフォーマンス領域（深掘り・
+        デリバリーの品目全量）・12の運営原則・モデル/方法/作成物・テーラリングの記録</span></a>
+        <a class="tile" href="./pmbok6.html"><b>PMBOK 第6版 ―&gt;</b><span>5プロセス群×10知識エリアの49プロセス地図・
+        ITTO 展開カード・ドキュメント体系</span></a>
+        <a class="tile" href="./agile.html"><b>アジャイル生産管理 ―&gt;</b><span>バックログ・WIP・DoR/DoD・畝ガント</span></a>
+        <a class="tile" href="./registers.html"><b>運用記録 ―&gt;</b><span>変更ログ・教訓登録簿・リスク登録簿の全量</span></a>
+        <a class="tile" href="./appendix.html"><b>再現ガイド ―&gt;</b><span>同じ仕組みを立ち上げる手順とプロンプト</span></a>
+      </div>
+    </section>
+
+    </div>
+    <footer>hatake-note ― 検索避け設定あり（noindex）。全ての数値は非公開の一次データから自動生成。</footer>
+  </div>
+</div>
+<script data-hatake-toc="1">
+(function(){
+  var toc = document.querySelector('.sidebar nav.toc');
+  if(!toc || !('IntersectionObserver' in window)) return;
+  var links = {};
+  Array.prototype.forEach.call(toc.querySelectorAll('a[href^="#"]'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.wrap > section[id]'))
+    .filter(function(s){ return links[s.id]; });
+  if(!sections.length) return;
+  /* 〔#141〕ネストTOC の子（a.sub＝pmbok6 の知識エリア #ka-N・pmbok7 の 8領域）も監視する＝
+     親の節に加えて、その中で最後に見えている子を .active にする（親と子の2段で現在位置を出す） */
+  var subs = Array.prototype.slice.call(toc.querySelectorAll('a.sub[href^="#"]'))
+    .map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); })
+    .filter(function(el){ return el; });
+  var visible = Object.create(null);
+  function apply(){
+    var activeId = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (visible[sections[i].id]) activeId = sections[i].id;
+    }
+    var activeSub = null;
+    if (activeId) {
+      var sec = document.getElementById(activeId);
+      for (var j = 0; j < subs.length; j++) {
+        if (visible[subs[j].id] && sec.contains(subs[j])) activeSub = subs[j].id;
+      }
+    }
+    for (var id in links) links[id].classList.toggle('active', id === activeId || id === activeSub);
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){ visible[entry.target.id] = entry.isIntersecting; });
+    apply();
+  }, { rootMargin: '0px 0px -70% 0px', threshold: 0 });
+  sections.forEach(function(s){ io.observe(s); });
+  subs.forEach(function(s){ io.observe(s); });
+})();
+/* 〔#141〕drawer（スマホのメニュー）・fragment で来た details と親を開く・sticky ヘッダの高さを --hdr へ */
+(function(){
+  var b = document.querySelector('.menu-btn'), sb = document.getElementById('site-menu');
+  /* ★モーダルの a11y〔#141 Codex 要修正4〕: 開いたら aside を role=dialog/aria-modal にして✕へ focus・
+     .main を inert・Tab を aside 内で巡回・閉じたら属性を戻しメニューボタンへ focus（リンク遷移は除く）・
+     広い画面へ resize したら閉じる（デスクトップでは aside は常設ナビ＝dialog 属性を残さない） */
+  var mainEl = document.querySelector('.app > .main');
+  var FOC = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  var mq = window.matchMedia('(min-width: 821px)');
+  function isOpen(){ return document.body.classList.contains('menu-open'); }
+  /* ★閉じた drawer（モバイル）は inert＝Tab 順・支援技術から外す〔#141 Codex 再レビュー 要修正2〕。
+     開いたら外す・デスクトップ幅（常設ナビ）でも外す。CSS の visibility:hidden と二重（JS 無しでも隠れる） */
+  function syncInert(){
+    if (!sb) return;
+    if (!mq.matches && !isOpen()) sb.setAttribute('inert', ''); else sb.removeAttribute('inert');
+  }
+  function setMenu(o, ret){
+    if(!b) return;
+    document.body.classList.toggle('menu-open', o); b.setAttribute('aria-expanded', o ? 'true' : 'false');
+    if (mainEl) { if (o) mainEl.setAttribute('inert', ''); else mainEl.removeAttribute('inert'); }
+    syncInert();
+    if (sb) {
+      if (o) { sb.setAttribute('role', 'dialog'); sb.setAttribute('aria-modal', 'true'); sb.setAttribute('aria-label', 'メニュー');
+               var c = sb.querySelector('.drawer-close') || sb.querySelector(FOC); if (c) c.focus(); }
+      else { sb.removeAttribute('role'); sb.removeAttribute('aria-modal'); sb.removeAttribute('aria-label');
+             if (ret !== false) b.focus({ preventScroll: true }); }
+    }
+  }
+  syncInert();
+  if (b && sb) {
+    b.addEventListener('click', function(){ setMenu(!isOpen()); });
+    document.addEventListener('click', function(e){
+      if (!isOpen()) return;
+      if (sb.contains(e.target) && e.target.closest('a')) setMenu(false, false);
+      else if (e.target.closest('[data-menu-close]')) setMenu(false);
+    });
+    document.addEventListener('keydown', function(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape') { setMenu(false); return; }
+      if (e.key !== 'Tab') return;
+      var f = [].slice.call(sb.querySelectorAll(FOC)).filter(function(x){ return x.offsetParent !== null; });
+      if (!f.length) return;
+      var a = document.activeElement;
+      if (e.shiftKey && (a === f[0] || !sb.contains(a))) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (a === f[f.length - 1] || !sb.contains(a))) { e.preventDefault(); f[0].focus(); }
+    });
+    function onmq(){ if (mq.matches && isOpen()) setMenu(false, false); syncInert(); }
+    if (mq.addEventListener) mq.addEventListener('change', onmq); else if (mq.addListener) mq.addListener(onmq);
+  }
+  function openTo(hash){
+    if (!hash || hash.length < 2) return;
+    var el = document.getElementById(hash.slice(1)); if (!el) return;
+    var n = el; while (n) { if (n.tagName === 'DETAILS') n.open = true; n = n.parentElement; }
+    el.scrollIntoView({ block: 'start' });
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]'); if (!a) return;
+    var h = a.getAttribute('href'); if (!document.getElementById(h.slice(1))) return;
+    e.preventDefault(); if (history.replaceState) history.replaceState(null, '', h); openTo(h);
+  });
+  window.addEventListener('hashchange', function(){ openTo(location.hash); });
+  var hd = document.querySelector('.topbar');
+  function hdr(){ if (hd) document.documentElement.style.setProperty('--hdr', hd.offsetHeight + 'px'); }
+  window.addEventListener('resize', hdr); hdr();
+  if (location.hash) openTo(location.hash);
+})();
+</script>
+</body>
+</html>
